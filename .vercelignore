@@ -1,0 +1,9 @@
+*.py
+requirements.txt
+players.csv
+team_report.csv
+tm_squads_cache.json
+wikidata_cache.json
+wikidata_clubs_cache.json
+wikidata_teams_cache.json
+README.md
