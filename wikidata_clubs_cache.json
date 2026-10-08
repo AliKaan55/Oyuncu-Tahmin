@@ -1,4 +1,188 @@
 {
+ "Q1457": {
+  "name": "U.C. Sampdoria",
+  "club": true
+ },
+ "Q8648": {
+  "name": "Lanciano Calcio 1920",
+  "club": true
+ },
+ "Q12110": {
+  "name": "Arenys de Mar",
+  "club": false
+ },
+ "Q15789": {
+  "name": "FC Bayern Munich",
+  "club": true
+ },
+ "Q17228": {
+  "name": "Catalonia national football team",
+  "club": false
+ },
+ "Q17479": {
+  "name": "Clube de Regatas do Flamengo",
+  "club": true
+ },
+ "Q81888": {
+  "name": "AFC Ajax",
+  "club": true
+ },
+ "Q212166": {
+  "name": "Peru men's national football team",
+  "club": false
+ },
+ "Q267245": {
+  "name": "Portugal men's national football team",
+  "club": false
+ },
+ "Q482764": {
+  "name": "Al-Nassr",
+  "club": true
+ },
+ "Q572957": {
+  "name": "Club Alianza Lima",
+  "club": true
+ },
+ "Q646088": {
+  "name": "Club Atletico All Boys",
+  "club": true
+ },
+ "Q845859": {
+  "name": "Cruz Azul",
+  "club": true
+ },
+ "Q919762": {
+  "name": "Sporting Club Lyon",
+  "club": true
+ },
+ "Q922698": {
+  "name": "Italy national under-21 football team",
+  "club": false
+ },
+ "Q1024338": {
+  "name": "Defensa y Justicia",
+  "club": true
+ },
+ "Q1049171": {
+  "name": "England national under-18 association football team",
+  "club": false
+ },
+ "Q2564977": {
+  "name": "Hessen Combinatie '03",
+  "club": true
+ },
+ "Q4201740": {
+  "name": "England national under-16 association football team",
+  "club": false
+ },
+ "Q6601875": {
+  "name": "Fenerbahçe Istanbul",
+  "club": true
+ },
+ "Q16844931": {
+  "name": "Inter Miami CF",
+  "club": true
+ },
+ "Q18380286": {
+  "name": "Los Angeles FC",
+  "club": true
+ },
+ "Q1543": {
+  "name": "AC Milan",
+  "club": true
+ },
+ "Q2052": {
+  "name": "ACF Fiorentina",
+  "club": true
+ },
+ "Q8823": {
+  "name": "Levante UD",
+  "club": true
+ },
+ "Q18747": {
+  "name": "West Ham United F.C.",
+  "club": true
+ },
+ "Q19585": {
+  "name": "Royal Charleroi S.C.",
+  "club": true
+ },
+ "Q19593": {
+  "name": "Celtic F.C.",
+  "club": true
+ },
+ "Q29108": {
+  "name": "FC Zenit Saint Petersburg",
+  "club": true
+ },
+ "Q34044": {
+  "name": "Scotland men's national football team",
+  "club": false
+ },
+ "Q83459": {
+  "name": "Brazil men's national football team",
+  "club": false
+ },
+ "Q132885": {
+  "name": "Olympique de Marseille",
+  "club": true
+ },
+ "Q134479": {
+  "name": "Croatia men's national football team",
+  "club": false
+ },
+ "Q142581": {
+  "name": "St. Lucia F.C.",
+  "club": true
+ },
+ "Q170040": {
+  "name": "Rubin Kazan",
+  "club": true
+ },
+ "Q176371": {
+  "name": "PFC CSKA Moscow",
+  "club": true
+ },
+ "Q321061": {
+  "name": "FC Sion",
+  "club": true
+ },
+ "Q483020": {
+  "name": "Paris Saint-Germain FC",
+  "club": true
+ },
+ "Q501245": {
+  "name": "Venezia F.C.",
+  "club": true
+ },
+ "Q506832": {
+  "name": "Club Athletico Paranaense",
+  "club": true
+ },
+ "Q522283": {
+  "name": "Red Star F.C.",
+  "club": true
+ },
+ "Q1772776": {
+  "name": "Portugal national under-20 football team",
+  "club": false
+ },
+ "Q3590033": {
+  "name": "France national under-16 association football team",
+  "club": false
+ },
+ "Q3873524": {
+  "name": "Portugal national under-19 football team",
+  "club": false
+ },
+ "Q16539606": {
+  "name": "Arta/Solar7",
+  "club": true
+ },
+ "Q16840338": {
+  "name": "NorthEast United FC",
+  "club": true
+ },
  "Q2674": {
   "name": "Palermo F.C.",
   "club": true
@@ -13,10 +197,6 @@
  },
  "Q11938": {
   "name": "PSV Eindhoven",
-  "club": true
- },
- "Q18747": {
-  "name": "West Ham United F.C.",
   "club": true
  },
  "Q22707": {
@@ -43,14 +223,6 @@
   "name": "Bayer 04 Leverkusen",
   "club": true
  },
- "Q134479": {
-  "name": "Croatia men's national football team",
-  "club": false
- },
- "Q142581": {
-  "name": "St. Lucia F.C.",
-  "club": true
- },
  "Q164089": {
   "name": "Mexico men's national football team",
   "club": false
@@ -63,8 +235,16 @@
   "name": "Belgium men's national football team",
   "club": false
  },
+ "Q167615": {
+  "name": "CF Montréal",
+  "club": true
+ },
  "Q172014": {
   "name": "Ghana men's national football team",
+  "club": false
+ },
+ "Q172025": {
+  "name": "Chile men's national football team",
   "club": false
  },
  "Q172221": {
@@ -219,20 +399,12 @@
   "name": "Inter Club d'Escaldes",
   "club": true
  },
- "Q845859": {
-  "name": "Cruz Azul",
-  "club": true
- },
  "Q920263": {
   "name": "Hertha BSC II",
   "club": true
  },
  "Q1370310": {
   "name": "Estonia national under-21 football team",
-  "club": false
- },
- "Q3590033": {
-  "name": "France national under-16 association football team",
   "club": false
  },
  "Q3720046": {
@@ -243,20 +415,12 @@
   "name": "Panathinaikos F.C.",
   "club": true
  },
- "Q6601875": {
-  "name": "Fenerbahçe Istanbul",
-  "club": true
- },
  "Q6723102": {
   "name": "North Macedonia national under-19 football team",
   "club": false
  },
  "Q7567232": {
   "name": "South Florida Bulls men's soccer",
-  "club": true
- },
- "Q16844931": {
-  "name": "Inter Miami CF",
   "club": true
  },
  "Q17619991": {
@@ -303,6 +467,14 @@
   "name": "FC Barcelona",
   "club": true
  },
+ "Q8749": {
+  "name": "RC Celta de Vigo",
+  "club": true
+ },
+ "Q8760": {
+  "name": "Deportivo de A Coruña",
+  "club": true
+ },
  "Q12236": {
   "name": "Racing de Santander",
   "club": true
@@ -331,18 +503,6 @@
   "name": "Austria men's national football team",
   "club": false
  },
- "Q167615": {
-  "name": "CF Montréal",
-  "club": true
- },
- "Q170040": {
-  "name": "Rubin Kazan",
-  "club": true
- },
- "Q172025": {
-  "name": "Chile men's national football team",
-  "club": false
- },
  "Q172567": {
   "name": "Beşiktaş J.K.",
   "club": true
@@ -358,6 +518,10 @@
  "Q189018": {
   "name": "Montenegro men's national football team",
   "club": false
+ },
+ "Q196107": {
+  "name": "Vancouver Whitecaps FC",
+  "club": true
  },
  "Q201584": {
   "name": "AEK Athens F.C.",
@@ -383,13 +547,13 @@
   "name": "Helsingin Jalkapalloklubi",
   "club": true
  },
- "Q212166": {
-  "name": "Peru men's national football team",
-  "club": false
- },
  "Q213161": {
   "name": "FK Čukarički",
   "club": true
+ },
+ "Q223748": {
+  "name": "Panama men's national football team",
+  "club": false
  },
  "Q291471": {
   "name": "AEL Limassol FC",
@@ -414,6 +578,10 @@
  "Q497637": {
   "name": "Comoros men's national football team",
   "club": false
+ },
+ "Q499616": {
+  "name": "Club Nacional de Football",
+  "club": true
  },
  "Q606210": {
   "name": "Querétaro F.C.",
@@ -459,12 +627,152 @@
   "name": "Centro Histórico de Lebowski",
   "club": true
  },
- "Q631": {
-  "name": "Inter Milan",
+ "Q212564": {
+  "name": "Colombia men's national football team",
+  "club": false
+ },
+ "Q214940": {
+  "name": "Estudiantes de La Plata",
   "club": true
  },
- "Q2052": {
-  "name": "ACF Fiorentina",
+ "Q220621": {
+  "name": "Argentinos Juniors",
+  "club": true
+ },
+ "Q232731": {
+  "name": "Qatar men's national football team",
+  "club": false
+ },
+ "Q239528": {
+  "name": "Singapore men's national football team",
+  "club": false
+ },
+ "Q270080": {
+  "name": "DR Congo men's national football team",
+  "club": false
+ },
+ "Q272712": {
+  "name": "Çaykur Rizespor",
+  "club": true
+ },
+ "Q274778": {
+  "name": "FC Krylia Sovetov Samara",
+  "club": true
+ },
+ "Q276533": {
+  "name": "Racing Club",
+  "club": true
+ },
+ "Q330978": {
+  "name": "B36 Tórshavn",
+  "club": true
+ },
+ "Q386139": {
+  "name": "Tajikistan men's national football team",
+  "club": false
+ },
+ "Q420594": {
+  "name": "FC Kairat",
+  "club": true
+ },
+ "Q424943": {
+  "name": "Shabab AlAhli Dubai Club",
+  "club": true
+ },
+ "Q459119": {
+  "name": "Chinese Taipei men's national football team",
+  "club": false
+ },
+ "Q483868": {
+  "name": "Czechia men's national football team",
+  "club": false
+ },
+ "Q543467": {
+  "name": "G.D. Chaves",
+  "club": true
+ },
+ "Q622430": {
+  "name": "Djurgårdens IF Fotboll",
+  "club": true
+ },
+ "Q639723": {
+  "name": "BK Häcken",
+  "club": true
+ },
+ "Q725332": {
+  "name": "GIF Sundsvall",
+  "club": true
+ },
+ "Q729890": {
+  "name": "Club Deportivo Árabe Unido",
+  "club": true
+ },
+ "Q730219": {
+  "name": "Korona Kielce",
+  "club": true
+ },
+ "Q738846": {
+  "name": "Basque Country regional football team",
+  "club": false
+ },
+ "Q740568": {
+  "name": "FC Kaisar",
+  "club": true
+ },
+ "Q745246": {
+  "name": "Santos Laguna",
+  "club": true
+ },
+ "Q753462": {
+  "name": "FC Universitatea Cluj",
+  "club": true
+ },
+ "Q824450": {
+  "name": "Levadiakos F.C.",
+  "club": true
+ },
+ "Q845137": {
+  "name": "Angers SCO",
+  "club": true
+ },
+ "Q856619": {
+  "name": "FC Tokyo",
+  "club": true
+ },
+ "Q1143000": {
+  "name": "Pumas UNAM",
+  "club": true
+ },
+ "Q1149041": {
+  "name": "Sanat Mes Kerman F.C.",
+  "club": true
+ },
+ "Q1322654": {
+  "name": "Liga Deportiva Alajuelense",
+  "club": true
+ },
+ "Q1339086": {
+  "name": "PFC Ludogorets 1945",
+  "club": true
+ },
+ "Q2350395": {
+  "name": "Istiqlol Dushanbe",
+  "club": true
+ },
+ "Q4835814": {
+  "name": "BK Olympic",
+  "club": true
+ },
+ "Q20718281": {
+  "name": "PFC Ludogorets Razgrad II",
+  "club": true
+ },
+ "Q108001798": {
+  "name": "IFK Norrköping FK",
+  "club": true
+ },
+ "Q631": {
+  "name": "Inter Milan",
   "club": true
  },
  "Q2739": {
@@ -479,20 +787,16 @@
   "name": "Empoli FC",
   "club": true
  },
+ "Q8603": {
+  "name": "US Sassuolo Calcio",
+  "club": true
+ },
  "Q8687": {
   "name": "Athletic Club",
   "club": true
  },
  "Q8701": {
   "name": "Atlético Madrid",
-  "club": true
- },
- "Q8749": {
-  "name": "RC Celta de Vigo",
-  "club": true
- },
- "Q8760": {
-  "name": "Deportivo de A Coruña",
   "club": true
  },
  "Q9616": {
@@ -523,6 +827,10 @@
   "name": "Middlesbrough F.C.",
   "club": true
  },
+ "Q18708": {
+  "name": "Fulham F.C.",
+  "club": true
+ },
  "Q19353": {
   "name": "FC Anzhi Makhachkala",
   "club": true
@@ -533,6 +841,10 @@
  },
  "Q31660": {
   "name": "Sepahan F.C.",
+  "club": true
+ },
+ "Q38568": {
+  "name": "São Paulo FC",
   "club": true
  },
  "Q42267": {
@@ -569,10 +881,6 @@
  },
  "Q80955": {
   "name": "Santos F.C.",
-  "club": true
- },
- "Q81888": {
-  "name": "AFC Ajax",
   "club": true
  },
  "Q131209": {
@@ -667,10 +975,6 @@
   "name": "Costa Rica men's national football team",
   "club": false
  },
- "Q196107": {
-  "name": "Vancouver Whitecaps FC",
-  "club": true
- },
  "Q196160": {
   "name": "Royale Union Saint-Gilloise",
   "club": true
@@ -678,62 +982,6 @@
  "Q200688": {
   "name": "Faroe Islands men's national football team",
   "club": false
- },
- "Q738846": {
-  "name": "Basque Country regional football team",
-  "club": false
- },
- "Q745246": {
-  "name": "Santos Laguna",
-  "club": true
- },
- "Q753462": {
-  "name": "FC Universitatea Cluj",
-  "club": true
- },
- "Q824450": {
-  "name": "Levadiakos F.C.",
-  "club": true
- },
- "Q845137": {
-  "name": "Angers SCO",
-  "club": true
- },
- "Q856619": {
-  "name": "FC Tokyo",
-  "club": true
- },
- "Q1143000": {
-  "name": "Pumas UNAM",
-  "club": true
- },
- "Q1149041": {
-  "name": "Sanat Mes Kerman F.C.",
-  "club": true
- },
- "Q1322654": {
-  "name": "Liga Deportiva Alajuelense",
-  "club": true
- },
- "Q1339086": {
-  "name": "PFC Ludogorets 1945",
-  "club": true
- },
- "Q2350395": {
-  "name": "Istiqlol Dushanbe",
-  "club": true
- },
- "Q4835814": {
-  "name": "BK Olympic",
-  "club": true
- },
- "Q20718281": {
-  "name": "PFC Ludogorets Razgrad II",
-  "club": true
- },
- "Q108001798": {
-  "name": "IFK Norrköping FK",
-  "club": true
  },
  "Q208635": {
   "name": "Canadian men's national soccer team",
@@ -747,108 +995,8 @@
   "name": "Brøndby IF",
   "club": true
  },
- "Q212564": {
-  "name": "Colombia men's national football team",
-  "club": false
- },
- "Q214940": {
-  "name": "Estudiantes de La Plata",
-  "club": true
- },
- "Q220621": {
-  "name": "Argentinos Juniors",
-  "club": true
- },
- "Q223748": {
-  "name": "Panama men's national football team",
-  "club": false
- },
- "Q232731": {
-  "name": "Qatar men's national football team",
-  "club": false
- },
- "Q239528": {
-  "name": "Singapore men's national football team",
-  "club": false
- },
- "Q270080": {
-  "name": "DR Congo men's national football team",
-  "club": false
- },
- "Q272712": {
-  "name": "Çaykur Rizespor",
-  "club": true
- },
- "Q274778": {
-  "name": "FC Krylia Sovetov Samara",
-  "club": true
- },
- "Q276533": {
-  "name": "Racing Club",
-  "club": true
- },
- "Q330978": {
-  "name": "B36 Tórshavn",
-  "club": true
- },
- "Q386139": {
-  "name": "Tajikistan men's national football team",
-  "club": false
- },
- "Q420594": {
-  "name": "FC Kairat",
-  "club": true
- },
- "Q424943": {
-  "name": "Shabab AlAhli Dubai Club",
-  "club": true
- },
- "Q459119": {
-  "name": "Chinese Taipei men's national football team",
-  "club": false
- },
- "Q482764": {
-  "name": "Al-Nassr",
-  "club": true
- },
- "Q483868": {
-  "name": "Czechia men's national football team",
-  "club": false
- },
- "Q499616": {
-  "name": "Club Nacional de Football",
-  "club": true
- },
- "Q543467": {
-  "name": "G.D. Chaves",
-  "club": true
- },
- "Q622430": {
-  "name": "Djurgårdens IF Fotboll",
-  "club": true
- },
- "Q639723": {
-  "name": "BK Häcken",
-  "club": true
- },
- "Q725332": {
-  "name": "GIF Sundsvall",
-  "club": true
- },
- "Q729890": {
-  "name": "Club Deportivo Árabe Unido",
-  "club": true
- },
- "Q730219": {
-  "name": "Korona Kielce",
-  "club": true
- },
  "Q2074": {
   "name": "Genoa CFC",
-  "club": true
- },
- "Q8603": {
-  "name": "US Sassuolo Calcio",
   "club": true
  },
  "Q8806": {
@@ -857,14 +1005,6 @@
  },
  "Q10300": {
   "name": "Rayo Vallecano",
-  "club": true
- },
- "Q17479": {
-  "name": "Clube de Regatas do Flamengo",
-  "club": true
- },
- "Q18708": {
-  "name": "Fulham F.C.",
   "club": true
  },
  "Q18732": {
@@ -891,10 +1031,6 @@
   "name": "Swindon Town F.C.",
   "club": true
  },
- "Q38568": {
-  "name": "São Paulo FC",
-  "club": true
- },
  "Q41420": {
   "name": "Borussia Dortmund",
   "club": true
@@ -902,10 +1038,6 @@
  "Q73965": {
   "name": "Al Hilal SFC",
   "club": true
- },
- "Q83459": {
-  "name": "Brazil men's national football team",
-  "club": false
  },
  "Q105254": {
   "name": "1. FSV Mainz 05",
@@ -935,6 +1067,10 @@
   "name": "Nigeria men's national football team",
   "club": false
  },
+ "Q183326": {
+  "name": "Armenia men's national football team",
+  "club": false
+ },
  "Q184387": {
   "name": "Norway men's national association football team",
   "club": false
@@ -950,6 +1086,14 @@
  "Q192253": {
   "name": "ŠK Slovan Bratislava",
   "club": true
+ },
+ "Q192828": {
+  "name": "Angola men's national football team",
+  "club": false
+ },
+ "Q193386": {
+  "name": "Bolivia men's national football team",
+  "club": false
  },
  "Q193749": {
   "name": "Legia Warsaw",
@@ -999,10 +1143,6 @@
   "name": "Uganda men's national football team",
   "club": false
  },
- "Q267245": {
-  "name": "Portugal men's national football team",
-  "club": false
- },
  "Q283760": {
   "name": "Al-Arabi SC",
   "club": true
@@ -1023,12 +1163,20 @@
   "name": "Cape Verde men's national football team",
   "club": false
  },
+ "Q335190": {
+  "name": "FK Vardar",
+  "club": true
+ },
  "Q429630": {
   "name": "Al Jazira Club",
   "club": true
  },
  "Q533094": {
   "name": "FC Viitorul Constanța",
+  "club": true
+ },
+ "Q583772": {
+  "name": "C.R.D. Libolo",
   "club": true
  },
  "Q604589": {
@@ -1039,6 +1187,10 @@
   "name": "Almere City FC",
   "club": true
  },
+ "Q676899": {
+  "name": "Italy men's national association football team",
+  "club": false
+ },
  "Q729640": {
   "name": "Curaçao men's national football team",
   "club": false
@@ -1047,8 +1199,8 @@
   "name": "CF Pachuca",
   "club": true
  },
- "Q740568": {
-  "name": "FC Kaisar",
+ "Q737936": {
+  "name": "Vejle Boldklub",
   "club": true
  },
  "Q757754": {
@@ -1062,6 +1214,10 @@
  "Q784965": {
   "name": "Mamelodi Sundowns F.C.",
   "club": true
+ },
+ "Q841378": {
+  "name": "FC DAC 1904 Dunajská Streda",
+  "club": false
  },
  "Q849949": {
   "name": "Atlante F.C.",
@@ -1093,6 +1249,10 @@
  },
  "Q3775566": {
   "name": "Deportivo Maipú",
+  "club": true
+ },
+ "Q6133365": {
+  "name": "Sport Boys Warnes",
   "club": true
  },
  "Q12247491": {
@@ -1139,12 +1299,16 @@
   "name": "AD Alcorcón",
   "club": true
  },
- "Q19490": {
-  "name": "Nottingham Forest F.C.",
+ "Q18729": {
+  "name": "Reading F.C.",
   "club": true
  },
- "Q19593": {
-  "name": "Celtic F.C.",
+ "Q18739": {
+  "name": "Sunderland A.F.C.",
+  "club": true
+ },
+ "Q19490": {
+  "name": "Nottingham Forest F.C.",
   "club": true
  },
  "Q19607": {
@@ -1153,10 +1317,6 @@
  },
  "Q28089": {
   "name": "Egypt men's national football team",
-  "club": false
- },
- "Q34044": {
-  "name": "Scotland men's national football team",
   "club": false
  },
  "Q101959": {
@@ -1179,13 +1339,13 @@
   "name": "FC Pohang Steelers",
   "club": true
  },
+ "Q170117": {
+  "name": "FC Ingolstadt 04",
+  "club": true
+ },
  "Q172969": {
   "name": "FC Shakhtar Donetsk",
   "club": true
- },
- "Q183326": {
-  "name": "Armenia men's national football team",
-  "club": false
  },
  "Q186243": {
   "name": "Iraq men's national football team",
@@ -1207,17 +1367,13 @@
   "name": "Trabzonspor",
   "club": true
  },
- "Q192828": {
-  "name": "Angola men's national football team",
-  "club": false
- },
- "Q193386": {
-  "name": "Bolivia men's national football team",
-  "club": false
- },
  "Q214978": {
   "name": "Club Atlético Independiente",
   "club": true
+ },
+ "Q219854": {
+  "name": "Philippines men's national association football team",
+  "club": false
  },
  "Q241670": {
   "name": "Bangladesh men's national football team",
@@ -1263,10 +1419,6 @@
   "name": "Atlético Nacional",
   "club": true
  },
- "Q335190": {
-  "name": "FK Vardar",
-  "club": true
- },
  "Q368000": {
   "name": "Cyprus national under-21 football team",
   "club": false
@@ -1291,10 +1443,6 @@
   "name": "South Korea men's national football team",
   "club": false
  },
- "Q583772": {
-  "name": "C.R.D. Libolo",
-  "club": true
- },
  "Q604581": {
   "name": "Club Sporting Cristal",
   "club": true
@@ -1305,14 +1453,6 @@
  },
  "Q663400": {
   "name": "Deportivo Cali",
-  "club": true
- },
- "Q676899": {
-  "name": "Italy men's national association football team",
-  "club": false
- },
- "Q737936": {
-  "name": "Vejle Boldklub",
   "club": true
  },
  "Q740637": {
@@ -1331,9 +1471,9 @@
   "name": "Al Ahed FC",
   "club": true
  },
- "Q841378": {
-  "name": "FC DAC 1904 Dunajská Streda",
-  "club": false
+ "Q839997": {
+  "name": "Brisbane Roar FC",
+  "club": true
  },
  "Q844271": {
   "name": "Vissel Kobe",
@@ -1375,12 +1515,20 @@
   "name": "Fukushima United FC",
   "club": true
  },
+ "Q5064191": {
+  "name": "United City F.C.",
+  "club": true
+ },
  "Q5647276": {
   "name": "Sevilla FC",
   "club": true
  },
- "Q6133365": {
-  "name": "Sport Boys Warnes",
+ "Q7185474": {
+  "name": "Philippines national under-23 football team",
+  "club": false
+ },
+ "Q15309584": {
+  "name": "G.S. Marko",
   "club": true
  },
  "Q18110185": {
@@ -1395,10 +1543,6 @@
   "name": "Juventus FC",
   "club": true
  },
- "Q1543": {
-  "name": "AC Milan",
-  "club": true
- },
  "Q2710": {
   "name": "Delfino Pescara 1936",
   "club": true
@@ -1409,6 +1553,10 @@
  },
  "Q8466": {
   "name": "1. FC Kaiserslautern",
+  "club": true
+ },
+ "Q8812": {
+  "name": "Granada CF",
   "club": true
  },
  "Q9617": {
@@ -1431,14 +1579,6 @@
   "name": "Club Atlético Peñarol",
   "club": true
  },
- "Q18729": {
-  "name": "Reading F.C.",
-  "club": true
- },
- "Q18739": {
-  "name": "Sunderland A.F.C.",
-  "club": true
- },
  "Q19500": {
   "name": "Wolverhampton Wanderers F.C.",
   "club": true
@@ -1455,6 +1595,10 @@
   "name": "TSV 1860 München",
   "club": true
  },
+ "Q134925": {
+  "name": "Greece men's national football team",
+  "club": false
+ },
  "Q157020": {
   "name": "Rot-Weiß Oberhausen",
   "club": true
@@ -1462,10 +1606,6 @@
  "Q164134": {
   "name": "United States men's national soccer team",
   "club": false
- },
- "Q170117": {
-  "name": "FC Ingolstadt 04",
-  "club": true
  },
  "Q175145": {
   "name": "Ivory Coast men's national football team",
@@ -1503,6 +1643,14 @@
   "name": "Dundee United F.C.",
   "club": true
  },
+ "Q211177": {
+  "name": "Viking FK",
+  "club": true
+ },
+ "Q211733": {
+  "name": "Mali men's national football team",
+  "club": false
+ },
  "Q216032": {
   "name": "K.R.C. Genk",
   "club": true
@@ -1511,9 +1659,9 @@
   "name": "Urawa Red Diamonds",
   "club": true
  },
- "Q219854": {
-  "name": "Philippines men's national association football team",
-  "club": false
+ "Q221602": {
+  "name": "AIK Fotboll",
+  "club": true
  },
  "Q238593": {
   "name": "D.C. United",
@@ -1587,10 +1735,6 @@
   "name": "Belgium national under-21 football team",
   "club": false
  },
- "Q839997": {
-  "name": "Brisbane Roar FC",
-  "club": true
- },
  "Q844509": {
   "name": "Bosnia and Herzegovina national under-19 football team",
   "club": false
@@ -1631,24 +1775,24 @@
   "name": "Denmark national under-21 football team",
   "club": false
  },
+ "Q1631307": {
+  "name": "Hougang United FC",
+  "club": true
+ },
  "Q3029309": {
   "name": "V-Varen Nagasaki",
   "club": true
  },
- "Q5064191": {
-  "name": "United City F.C.",
+ "Q6481836": {
+  "name": "P.A.S. Lamia 1964",
   "club": true
+ },
+ "Q6723101": {
+  "name": "North Macedonia national under-17 football team",
+  "club": false
  },
  "Q7069287": {
   "name": "Al-Diriyah Club",
-  "club": true
- },
- "Q7185474": {
-  "name": "Philippines national under-23 football team",
-  "club": false
- },
- "Q15309584": {
-  "name": "G.S. Marko",
   "club": true
  },
  "Q15962672": {
@@ -1663,10 +1807,6 @@
   "name": "Pannaxiakos F.C.",
   "club": true
  },
- "Q18380286": {
-  "name": "Los Angeles FC",
-  "club": true
- },
  "Q20429561": {
   "name": "Sepsi OSK Sfântu Gheorghe",
   "club": true
@@ -1679,10 +1819,6 @@
   "name": "Olympique Lyonnais",
   "club": true
  },
- "Q1457": {
-  "name": "U.C. Sampdoria",
-  "club": true
- },
  "Q2609": {
   "name": "SS Lazio",
   "club": true
@@ -1691,17 +1827,13 @@
   "name": "Watford F.C.",
   "club": true
  },
- "Q8812": {
-  "name": "Granada CF",
-  "club": true
- },
  "Q8835": {
   "name": "RCD Mallorca",
   "club": true
  },
- "Q17228": {
-  "name": "Catalonia national football team",
-  "club": false
+ "Q10333": {
+  "name": "Valencia CF",
+  "club": true
  },
  "Q18711": {
   "name": "Aston Villa F.C.",
@@ -1723,6 +1855,10 @@
   "name": "Tunisia men's national football team",
   "club": false
  },
+ "Q44270": {
+  "name": "Burkina Faso men's national football team",
+  "club": false
+ },
  "Q47774": {
   "name": "France men's national association football team",
   "club": false
@@ -1739,9 +1875,9 @@
   "name": "China men's national football team",
   "club": false
  },
- "Q134925": {
-  "name": "Greece men's national football team",
-  "club": false
+ "Q151747": {
+  "name": "Fortuna Düsseldorf",
+  "club": true
  },
  "Q179658": {
   "name": "FCSB",
@@ -1767,20 +1903,12 @@
   "name": "FC Zürich",
   "club": true
  },
- "Q211177": {
-  "name": "Viking FK",
+ "Q211912": {
+  "name": "Odense Boldklub",
   "club": true
- },
- "Q211733": {
-  "name": "Mali men's national football team",
-  "club": false
  },
  "Q216661": {
   "name": "C.D. Tenerife",
-  "club": true
- },
- "Q221602": {
-  "name": "AIK Fotboll",
   "club": true
  },
  "Q242119": {
@@ -1805,10 +1933,6 @@
  },
  "Q482406": {
   "name": "FC Seoul",
-  "club": true
- },
- "Q483020": {
-  "name": "Paris Saint-Germain FC",
   "club": true
  },
  "Q509170": {
@@ -1875,10 +1999,6 @@
   "name": "Giresunspor",
   "club": true
  },
- "Q1631307": {
-  "name": "Hougang United FC",
-  "club": true
- },
  "Q1780231": {
   "name": "Poland national under-21 football team",
   "club": false
@@ -1906,14 +2026,6 @@
  "Q5132018": {
   "name": "Clevedon United F.C.",
   "club": true
- },
- "Q6481836": {
-  "name": "P.A.S. Lamia 1964",
-  "club": true
- },
- "Q6723101": {
-  "name": "North Macedonia national under-17 football team",
-  "club": false
  },
  "Q12247594": {
   "name": "Damac Club",
@@ -1951,16 +2063,8 @@
   "name": "San Diego FC",
   "club": true
  },
- "Q8823": {
-  "name": "Levante UD",
-  "club": true
- },
  "Q10315": {
   "name": "Real Sociedad",
-  "club": true
- },
- "Q10333": {
-  "name": "Valencia CF",
   "club": true
  },
  "Q10512": {
@@ -1969,10 +2073,6 @@
  },
  "Q11971": {
   "name": "Sociedad Deportiva Huesca",
-  "club": true
- },
- "Q15789": {
-  "name": "FC Bayern Munich",
   "club": true
  },
  "Q16932": {
@@ -1991,10 +2091,6 @@
   "name": "FC Mordovia Saransk",
   "club": true
  },
- "Q44270": {
-  "name": "Burkina Faso men's national football team",
-  "club": false
- },
  "Q51974": {
   "name": "Hamburger SV",
   "club": true
@@ -2003,13 +2099,13 @@
   "name": "KV Mechelen",
   "club": true
  },
- "Q151747": {
-  "name": "Fortuna Düsseldorf",
-  "club": true
- },
  "Q180845": {
   "name": "Bulgaria men's national football team",
   "club": false
+ },
+ "Q182930": {
+  "name": "FC Rostov",
+  "club": true
  },
  "Q186276": {
   "name": "Lithuania men's national football team",
@@ -2019,16 +2115,16 @@
   "name": "Ferencvárosi TC",
   "club": true
  },
- "Q211912": {
-  "name": "Odense Boldklub",
-  "club": true
- },
  "Q218074": {
   "name": "Neftchi Baku PFC",
   "club": true
  },
  "Q219703": {
   "name": "Boavista F.C.",
+  "club": true
+ },
+ "Q244317": {
+  "name": "FC Pyunik",
   "club": true
  },
  "Q270995": {
@@ -2047,6 +2143,10 @@
   "name": "Al Wasl FC",
   "club": true
  },
+ "Q575370": {
+  "name": "San Jose Earthquakes",
+  "club": true
+ },
  "Q581423": {
   "name": "FC Hradec Králové",
   "club": true
@@ -2055,8 +2155,16 @@
   "name": "Finland national under-21 football team",
   "club": false
  },
+ "Q684132": {
+  "name": "Armenia national under-21 football team",
+  "club": false
+ },
  "Q738886": {
   "name": "FK Teplice",
+  "club": true
+ },
+ "Q768253": {
+  "name": "Club de Fútbol Monterrey",
   "club": true
  },
  "Q824850": {
@@ -2103,6 +2211,10 @@
   "name": "Turkey national under-21 football team",
   "club": false
  },
+ "Q1630430": {
+  "name": "Portugal national under-21 football team",
+  "club": false
+ },
  "Q2272209": {
   "name": "Serbia national under-21 football team",
   "club": false
@@ -2110,6 +2222,10 @@
  "Q2306719": {
   "name": "Russia national under-21 football team",
   "club": false
+ },
+ "Q2620016": {
+  "name": "Abha",
+  "club": true
  },
  "Q3117572": {
   "name": "Athlético Marseille",
@@ -2129,6 +2245,10 @@
  },
  "Q16836317": {
   "name": "Atlanta United FC",
+  "club": true
+ },
+ "Q24185298": {
+  "name": "Nashville SC",
   "club": true
  },
  "Q39056364": {
@@ -2167,10 +2287,6 @@
   "name": "SV Werder Bremen",
   "club": true
  },
- "Q132885": {
-  "name": "Olympique de Marseille",
-  "club": true
- },
  "Q141688": {
   "name": "Anorthosis Famagusta FC",
   "club": true
@@ -2189,10 +2305,6 @@
  },
  "Q181216": {
   "name": "HNK Hajduk Split",
-  "club": true
- },
- "Q182930": {
-  "name": "FC Rostov",
   "club": true
  },
  "Q188430": {
@@ -2223,6 +2335,10 @@
   "name": "Sparta Rotterdam",
   "club": true
  },
+ "Q210768": {
+  "name": "FC Sheriff Tiraspol",
+  "club": true
+ },
  "Q216510": {
   "name": "C.F. Os Belenenses",
   "club": true
@@ -2238,10 +2354,6 @@
  "Q239549": {
   "name": "Thailand men's national football team",
   "club": false
- },
- "Q244317": {
-  "name": "FC Pyunik",
-  "club": true
  },
  "Q244728": {
   "name": "Tanzania men's national football team",
@@ -2263,13 +2375,13 @@
   "name": "Al-Gharafa SC",
   "club": true
  },
+ "Q430107": {
+  "name": "Samsunspor FC",
+  "club": true
+ },
  "Q455413": {
   "name": "Belize men's national association football team",
   "club": false
- },
- "Q575370": {
-  "name": "San Jose Earthquakes",
-  "club": true
  },
  "Q595489": {
   "name": "Fagiano Okayama",
@@ -2278,10 +2390,6 @@
  "Q630279": {
   "name": "Sanfrecce Hiroshima",
   "club": true
- },
- "Q684132": {
-  "name": "Armenia national under-21 football team",
-  "club": false
  },
  "Q704873": {
   "name": "FC Lusitanos",
@@ -2295,10 +2403,6 @@
   "name": "Asteras Tripoli F.C.",
   "club": true
  },
- "Q768253": {
-  "name": "Club de Fútbol Monterrey",
-  "club": true
- },
  "Q823384": {
   "name": "Shimizu S-Pulse",
   "club": true
@@ -2307,12 +2411,20 @@
   "name": "FK TSC",
   "club": true
  },
+ "Q891679": {
+  "name": "Boluspor",
+  "club": true
+ },
  "Q963238": {
   "name": "Qatar national under-23 football team",
   "club": false
  },
  "Q1051340": {
   "name": "Nyíregyháza Spartacus FC",
+  "club": true
+ },
+ "Q1140598": {
+  "name": "Lion City Sailors F.C.",
   "club": true
  },
  "Q1322761": {
@@ -2335,16 +2447,8 @@
   "name": "Muangthong United F.C.",
   "club": true
  },
- "Q1630430": {
-  "name": "Portugal national under-21 football team",
-  "club": false
- },
  "Q2539720": {
   "name": "Club Deportivo Walter Ferretti",
-  "club": true
- },
- "Q2620016": {
-  "name": "Abha",
   "club": true
  },
  "Q2628891": {
@@ -2383,12 +2487,24 @@
   "name": "Norway national under-23 association football team",
   "club": true
  },
+ "Q12699711": {
+  "name": "Singapore national under-23 football team",
+  "club": false
+ },
  "Q16243716": {
   "name": "Bengaluru FC",
   "club": true
  },
- "Q24185298": {
-  "name": "Nashville SC",
+ "Q7896919": {
+  "name": "Unión Tarapoto",
+  "club": true
+ },
+ "Q16838020": {
+  "name": "CS Universitatea Craiova",
+  "club": true
+ },
+ "Q27654506": {
+  "name": "FC Väsby United",
   "club": true
  },
  "Q1893": {
@@ -2431,6 +2547,10 @@
   "name": "FC Torpedo Kutaisi",
   "club": true
  },
+ "Q80958": {
+  "name": "Botafogo F.R.",
+  "club": true
+ },
  "Q105853": {
   "name": "Karlsruher SC",
   "club": true
@@ -2457,10 +2577,6 @@
  },
  "Q208399": {
   "name": "SC Bastia",
-  "club": true
- },
- "Q210768": {
-  "name": "FC Sheriff Tiraspol",
   "club": true
  },
  "Q210864": {
@@ -2495,12 +2611,12 @@
   "name": "SSC Farul Constanța",
   "club": true
  },
- "Q430107": {
-  "name": "Samsunspor FC",
-  "club": true
- },
  "Q464775": {
   "name": "FC Thun",
+  "club": true
+ },
+ "Q573637": {
+  "name": "Beijing Sport University F.C.",
   "club": true
  },
  "Q600641": {
@@ -2535,14 +2651,6 @@
   "name": "FC Neftchi Fergana",
   "club": true
  },
- "Q891679": {
-  "name": "Boluspor",
-  "club": true
- },
- "Q922698": {
-  "name": "Italy national under-21 football team",
-  "club": false
- },
  "Q933046": {
   "name": "FC Progrès Niederkorn",
   "club": true
@@ -2565,10 +2673,6 @@
  },
  "Q1138548": {
   "name": "Rewa F.C.",
-  "club": true
- },
- "Q1140598": {
-  "name": "Lion City Sailors F.C.",
   "club": true
  },
  "Q1176524": {
@@ -2611,22 +2715,6 @@
   "name": "Santos FC",
   "club": false
  },
- "Q7896919": {
-  "name": "Unión Tarapoto",
-  "club": true
- },
- "Q12699711": {
-  "name": "Singapore national under-23 football team",
-  "club": false
- },
- "Q16838020": {
-  "name": "CS Universitatea Craiova",
-  "club": true
- },
- "Q27654506": {
-  "name": "FC Väsby United",
-  "club": true
- },
  "Q12230": {
   "name": "Real Murcia",
   "club": true
@@ -2645,10 +2733,6 @@
  },
  "Q44441": {
   "name": "Al Ahli FC",
-  "club": true
- },
- "Q80958": {
-  "name": "Botafogo F.R.",
   "club": true
  },
  "Q137747": {
@@ -2703,16 +2787,16 @@
   "name": "Maldives men's national football team",
   "club": false
  },
- "Q573637": {
-  "name": "Beijing Sport University F.C.",
-  "club": true
- },
  "Q579341": {
   "name": "Faroe Islands national under-21 football team",
   "club": false
  },
  "Q632695": {
   "name": "Fanja SC",
+  "club": true
+ },
+ "Q642291": {
+  "name": "FC Dallas",
   "club": true
  },
  "Q775439": {
@@ -2762,6 +2846,10 @@
  "Q2853237": {
   "name": "Antigua GFC",
   "club": true
+ },
+ "Q3590572": {
+  "name": "United States men's national under-23 soccer team",
+  "club": false
  },
  "Q3590758": {
   "name": "Portugal Olympic football team",
@@ -2818,6 +2906,10 @@
  "Q105861": {
   "name": "VfL Bochum",
   "club": true
+ },
+ "Q113143": {
+  "name": "Kosovo men's national association football team",
+  "club": false
  },
  "Q188228": {
   "name": "El Salvador men's national football team",
@@ -2895,13 +2987,13 @@
   "name": "Gazélec Ajaccio",
   "club": true
  },
- "Q642291": {
-  "name": "FC Dallas",
-  "club": true
- },
  "Q651714": {
   "name": "Bulgaria national under-21 football team",
   "club": false
+ },
+ "Q689874": {
+  "name": "Philadelphia Union",
+  "club": true
  },
  "Q874016": {
   "name": "Kawasaki Frontale",
@@ -2910,6 +3002,10 @@
  "Q1023235": {
   "name": "Tiburones Rojos de Veracruz",
   "club": true
+ },
+ "Q1277549": {
+  "name": "France national under-21 association football team",
+  "club": false
  },
  "Q1386893": {
   "name": "BG Pathum United F.C.",
@@ -2935,6 +3031,10 @@
   "name": "Chile national under-20 football team",
   "club": false
  },
+ "Q2539734": {
+  "name": "C.D. FAS",
+  "club": true
+ },
  "Q2663472": {
   "name": "Georgia national under-21 football team",
   "club": false
@@ -2947,12 +3047,12 @@
   "name": "Lincoln Red Imps F.C.",
   "club": true
  },
- "Q3590572": {
-  "name": "United States men's national under-23 soccer team",
-  "club": false
- },
  "Q4701707": {
   "name": "Akron Zips men's soccer",
+  "club": true
+ },
+ "Q5161552": {
+  "name": "UConn Huskies men's soccer",
   "club": true
  },
  "Q6587944": {
@@ -3031,12 +3131,12 @@
   "name": "FC Baku",
   "club": true
  },
- "Q113143": {
-  "name": "Kosovo men's national association football team",
-  "club": false
- },
  "Q144190": {
   "name": "PFC Levski Sofia",
+  "club": true
+ },
+ "Q157352": {
+  "name": "FSV Frankfurt",
   "club": true
  },
  "Q190526": {
@@ -3067,12 +3167,20 @@
   "name": "AD Fafe",
   "club": true
  },
+ "Q303033": {
+  "name": "Austria national under-21 football team",
+  "club": false
+ },
  "Q333838": {
   "name": "Evian Thonon Gaillard F.C.",
   "club": true
  },
  "Q382418": {
   "name": "FK Zeta",
+  "club": true
+ },
+ "Q391789": {
+  "name": "GAIS",
   "club": true
  },
  "Q429501": {
@@ -3083,13 +3191,13 @@
   "name": "Andorra national under-21 football team",
   "club": false
  },
+ "Q568348": {
+  "name": "Paide Linnameeskond",
+  "club": true
+ },
  "Q665704": {
   "name": "Montenegro national under-21 association football team",
   "club": false
- },
- "Q689874": {
-  "name": "Philadelphia Union",
-  "club": true
  },
  "Q730809": {
   "name": "Nîmes Olympique",
@@ -3115,12 +3223,12 @@
   "name": "Global Cebu F.C.",
   "club": true
  },
- "Q1277549": {
-  "name": "France national under-21 association football team",
-  "club": false
- },
  "Q1322550": {
   "name": "FC Petrolul Ploiești",
+  "club": true
+ },
+ "Q1483314": {
+  "name": "JK Tammeka Tartu",
   "club": true
  },
  "Q1672798": {
@@ -3131,10 +3239,6 @@
   "name": "Andorra CF",
   "club": true
  },
- "Q2539734": {
-  "name": "C.D. FAS",
-  "club": true
- },
  "Q2662994": {
   "name": "Kazakhstan national under-21 football team",
   "club": false
@@ -3143,12 +3247,12 @@
   "name": "Al Fateh SC",
   "club": true
  },
- "Q5161552": {
-  "name": "UConn Huskies men's soccer",
-  "club": true
- },
  "Q7129942": {
   "name": "Panama national under-20 football team",
+  "club": false
+ },
+ "Q15939830": {
+  "name": "FK Liepāja",
   "club": false
  },
  "Q16637410": {
@@ -3179,10 +3283,6 @@
   "name": "1. FC Köln",
   "club": true
  },
- "Q157352": {
-  "name": "FSV Frankfurt",
-  "club": true
- },
  "Q219233": {
   "name": "SBV Vitesse",
   "club": true
@@ -3203,20 +3303,12 @@
   "name": "Albania national under-21 football team",
   "club": false
  },
- "Q303033": {
-  "name": "Austria national under-21 football team",
-  "club": false
- },
  "Q324854": {
   "name": "Germany national under-19 football team",
   "club": false
  },
  "Q344328": {
   "name": "İstanbulspor A.Ş.",
-  "club": true
- },
- "Q391789": {
-  "name": "GAIS",
   "club": true
  },
  "Q459090": {
@@ -3235,16 +3327,16 @@
   "name": "Club Deportivo Magallanes",
   "club": true
  },
- "Q568348": {
-  "name": "Paide Linnameeskond",
-  "club": true
- },
  "Q628763": {
   "name": "F.C. Bunyodkor",
   "club": true
  },
  "Q646596": {
   "name": "Puebla F.C.",
+  "club": true
+ },
+ "Q692646": {
+  "name": "Club Atlético Banfield",
   "club": true
  },
  "Q746764": {
@@ -3271,8 +3363,12 @@
   "name": "Nasaf Qarshi",
   "club": true
  },
- "Q1483314": {
-  "name": "JK Tammeka Tartu",
+ "Q1187790": {
+  "name": "Argentina national under-20 football team",
+  "club": false
+ },
+ "Q1570132": {
+  "name": "Lobos de la BUAP",
   "club": true
  },
  "Q1881407": {
@@ -3307,16 +3403,20 @@
   "name": "China national under-20 football team",
   "club": false
  },
+ "Q10954755": {
+  "name": "Hong Kong national under-20 football team",
+  "club": false
+ },
  "Q12247500": {
   "name": "Al-Ula Club",
   "club": true
  },
- "Q15939830": {
-  "name": "FK Liepāja",
-  "club": false
- },
  "Q16525419": {
   "name": "1. FSV Mainz 05 II",
+  "club": true
+ },
+ "Q16839398": {
+  "name": "FC Goa",
   "club": true
  },
  "Q123376316": {
@@ -3383,12 +3483,12 @@
   "name": "Al Kharaitiyat SC",
   "club": true
  },
- "Q579931": {
-  "name": "Gor Mahia F.C.",
+ "Q460494": {
+  "name": "Panionios F.C.",
   "club": true
  },
- "Q692646": {
-  "name": "Club Atlético Banfield",
+ "Q579931": {
+  "name": "Gor Mahia F.C.",
   "club": true
  },
  "Q734785": {
@@ -3411,28 +3511,44 @@
   "name": "Hatayspor",
   "club": true
  },
- "Q1187790": {
-  "name": "Argentina national under-20 football team",
-  "club": false
- },
- "Q1570132": {
-  "name": "Lobos de la BUAP",
+ "Q1386854": {
+  "name": "FC Andorra",
   "club": true
  },
  "Q1636019": {
   "name": "Alanyaspor",
   "club": true
  },
+ "Q1770361": {
+  "name": "Jong Ajax",
+  "club": true
+ },
+ "Q1811026": {
+  "name": "Netherlands national under-21 football team",
+  "club": false
+ },
  "Q1926260": {
   "name": "Mexico national under-23 football team",
+  "club": false
+ },
+ "Q1945630": {
+  "name": "A.S. Roma",
   "club": false
  },
  "Q2046312": {
   "name": "Sri Pahang F.C.",
   "club": true
  },
+ "Q2670674": {
+  "name": "Poland national under-19 football team",
+  "club": false
+ },
  "Q2701714": {
   "name": "France national under-19 association football team",
+  "club": false
+ },
+ "Q2736263": {
+  "name": "Poland national under-17 football team",
   "club": false
  },
  "Q3277752": {
@@ -3451,12 +3567,12 @@
   "name": "Nigeria national under-20 football team",
   "club": false
  },
- "Q7855168": {
-  "name": "Turkey national under-20 football team",
+ "Q3873519": {
+  "name": "Poland national under-18 football team",
   "club": false
  },
- "Q10954755": {
-  "name": "Hong Kong national under-20 football team",
+ "Q7855168": {
+  "name": "Turkey national under-20 football team",
   "club": false
  },
  "Q11144859": {
@@ -3470,10 +3586,6 @@
  "Q16581702": {
   "name": "Colombia Olympic football team",
   "club": false
- },
- "Q16839398": {
-  "name": "FC Goa",
-  "club": true
  },
  "Q20155517": {
   "name": "Serbia national under-20 football team",
@@ -3489,6 +3601,14 @@
  },
  "Q18721": {
   "name": "Norwich City F.C.",
+  "club": true
+ },
+ "Q19512": {
+  "name": "FC Sochaux-Montbéliard",
+  "club": true
+ },
+ "Q24680": {
+  "name": "FC Utrecht",
   "club": true
  },
  "Q24699": {
@@ -3515,9 +3635,17 @@
   "name": "IFK Göteborg",
   "club": true
  },
+ "Q281780": {
+  "name": "FC Maxline Viciebsk",
+  "club": true
+ },
  "Q285702": {
   "name": "Al-Faisaly SC",
   "club": true
+ },
+ "Q287804": {
+  "name": "United States men's national under-20 association football team",
+  "club": false
  },
  "Q310830": {
   "name": "Talaba SC",
@@ -3533,10 +3661,6 @@
  },
  "Q427491": {
   "name": "SKN St. Pölten",
-  "club": true
- },
- "Q460494": {
-  "name": "Panionios F.C.",
   "club": true
  },
  "Q484990": {
@@ -3567,25 +3691,13 @@
   "name": "Erbil SC",
   "club": true
  },
- "Q1386854": {
-  "name": "FC Andorra",
-  "club": true
- },
  "Q1579411": {
   "name": "Real C.D. España",
   "club": true
  },
- "Q1770361": {
-  "name": "Jong Ajax",
+ "Q1730906": {
+  "name": "Kedah Darul Aman F.C.",
   "club": true
- },
- "Q1811026": {
-  "name": "Netherlands national under-21 football team",
-  "club": false
- },
- "Q1945630": {
-  "name": "A.S. Roma",
-  "club": false
  },
  "Q1985208": {
   "name": "Venezuela national under-20 association football team",
@@ -3607,24 +3719,16 @@
   "name": "Uruguay Olympic football team",
   "club": false
  },
- "Q2670674": {
-  "name": "Poland national under-19 football team",
-  "club": false
- },
- "Q2736263": {
-  "name": "Poland national under-17 football team",
-  "club": false
- },
  "Q2829278": {
   "name": "Al-Seeb Club",
   "club": true
  },
- "Q3873519": {
-  "name": "Poland national under-18 football team",
-  "club": false
- },
  "Q3873525": {
   "name": "Denmark national under-19 football team",
+  "club": false
+ },
+ "Q6067905": {
+  "name": "Iraq national under-20 football team",
   "club": false
  },
  "Q7313421": {
@@ -3655,14 +3759,6 @@
   "name": "Spezia Calcio",
   "club": true
  },
- "Q19512": {
-  "name": "FC Sochaux-Montbéliard",
-  "club": true
- },
- "Q24680": {
-  "name": "FC Utrecht",
-  "club": true
- },
  "Q32538": {
   "name": "Atlético Levante UD",
   "club": true
@@ -3675,10 +3771,6 @@
   "name": "Zamora F.C.",
   "club": true
  },
- "Q176371": {
-  "name": "PFC CSKA Moscow",
-  "club": true
- },
  "Q189170": {
   "name": "Jagiellonia Białystok",
   "club": true
@@ -3687,17 +3779,13 @@
   "name": "England national under-21 association football team",
   "club": false
  },
+ "Q249662": {
+  "name": "Nagoya Grampus",
+  "club": true
+ },
  "Q260559": {
   "name": "Örebro SK",
   "club": true
- },
- "Q281780": {
-  "name": "FC Maxline Viciebsk",
-  "club": true
- },
- "Q287804": {
-  "name": "United States men's national under-20 association football team",
-  "club": false
  },
  "Q369349": {
   "name": "US Orléans",
@@ -3723,6 +3811,14 @@
   "name": "Nea Salamis Famagusta FC",
   "club": true
  },
+ "Q727918": {
+  "name": "Motor Lublin",
+  "club": true
+ },
+ "Q855401": {
+  "name": "Júbilo Iwata",
+  "club": true
+ },
  "Q1023227": {
   "name": "CD Tondela",
   "club": true
@@ -3739,6 +3835,10 @@
   "name": "FK Apolonia",
   "club": true
  },
+ "Q1344163": {
+  "name": "France national under-20 association football team",
+  "club": false
+ },
  "Q1387293": {
   "name": "FC Liefering",
   "club": true
@@ -3747,8 +3847,8 @@
   "name": "France national under-18 association football team",
   "club": false
  },
- "Q1730906": {
-  "name": "Kedah Darul Aman F.C.",
+ "Q1877396": {
+  "name": "ENPPI SC",
   "club": true
  },
  "Q2069554": {
@@ -3763,6 +3863,10 @@
   "name": "Real Estelí F.C.",
   "club": true
  },
+ "Q3590257": {
+  "name": "Latvia national under-17 football team",
+  "club": false
+ },
  "Q3590274": {
   "name": "Norway national under-17 association football team",
   "club": false
@@ -3775,12 +3879,12 @@
   "name": "Norway national under-19 association football team",
   "club": false
  },
- "Q4140015": {
-  "name": "Scotland national under-19 football team",
+ "Q4139875": {
+  "name": "Latvia national under-19 football team",
   "club": false
  },
- "Q6067905": {
-  "name": "Iraq national under-20 football team",
+ "Q4140015": {
+  "name": "Scotland national under-19 football team",
   "club": false
  },
  "Q13423234": {
@@ -3789,6 +3893,10 @@
  },
  "Q16152339": {
   "name": "Gibraltar national under-19 football team",
+  "club": false
+ },
+ "Q16959992": {
+  "name": "Latvia national under-18 football team",
   "club": false
  },
  "Q18913672": {
@@ -3823,20 +3931,12 @@
   "name": "Aris Thessaloniki F.C.",
   "club": true
  },
- "Q249662": {
-  "name": "Nagoya Grampus",
-  "club": true
- },
  "Q270689": {
   "name": "Vietnam men's national football team",
   "club": false
  },
  "Q297643": {
   "name": "AS FAN Niamey",
-  "club": true
- },
- "Q321061": {
-  "name": "FC Sion",
   "club": true
  },
  "Q455971": {
@@ -3851,6 +3951,10 @@
   "name": "Hanoi FC",
   "club": true
  },
+ "Q582342": {
+  "name": "Cultural y Deportiva Leonesa",
+  "club": true
+ },
  "Q593708": {
   "name": "Persija Jakarta",
   "club": true
@@ -3859,16 +3963,8 @@
   "name": "Seattle Sounders FC",
   "club": true
  },
- "Q727918": {
-  "name": "Motor Lublin",
-  "club": true
- },
  "Q757460": {
   "name": "Atlético Olympic F.C.",
-  "club": true
- },
- "Q855401": {
-  "name": "Júbilo Iwata",
   "club": true
  },
  "Q926152": {
@@ -3887,10 +3983,6 @@
   "name": "Comunicaciones F.C.",
   "club": true
  },
- "Q1024338": {
-  "name": "Defensa y Justicia",
-  "club": true
- },
  "Q1094113": {
   "name": "Villarreal CF B",
   "club": true
@@ -3898,10 +3990,6 @@
  "Q1208841": {
   "name": "Platense F.C.",
   "club": true
- },
- "Q1344163": {
-  "name": "France national under-20 association football team",
-  "club": false
  },
  "Q1460053": {
   "name": "Panetolikos F.C.",
@@ -3911,12 +3999,12 @@
   "name": "Jomo Cosmos F.C.",
   "club": true
  },
+ "Q1641573": {
+  "name": "Colombia national under-20 football team",
+  "club": false
+ },
  "Q1680249": {
   "name": "Västerås SK Fotboll",
-  "club": true
- },
- "Q1877396": {
-  "name": "ENPPI SC",
   "club": true
  },
  "Q2581881": {
@@ -3927,16 +4015,8 @@
   "name": "Club Deportivo Malacateco",
   "club": true
  },
- "Q3590257": {
-  "name": "Latvia national under-17 football team",
-  "club": false
- },
  "Q3590675": {
   "name": "Honduras national under-17 football team",
-  "club": false
- },
- "Q4139875": {
-  "name": "Latvia national under-19 football team",
   "club": false
  },
  "Q4842802": {
@@ -3970,10 +4050,6 @@
  "Q15628715": {
   "name": "Victoria University SC",
   "club": true
- },
- "Q16959992": {
-  "name": "Latvia national under-18 football team",
-  "club": false
  },
  "Q18411591": {
   "name": "Europa Point F.C.",
@@ -4047,10 +4123,6 @@
   "name": "Hunan Billows F.C.",
   "club": true
  },
- "Q582342": {
-  "name": "Cultural y Deportiva Leonesa",
-  "club": true
- },
  "Q602515": {
   "name": "Sportivo Luqueño",
   "club": true
@@ -4067,8 +4139,16 @@
   "name": "San Marino Calcio",
   "club": true
  },
- "Q1641573": {
-  "name": "Colombia national under-20 football team",
+ "Q1192755": {
+  "name": "FC Viikingit",
+  "club": true
+ },
+ "Q1252167": {
+  "name": "Horoya AC",
+  "club": true
+ },
+ "Q1270133": {
+  "name": "Denmark national under-17 football team",
   "club": false
  },
  "Q1754506": {
@@ -4101,6 +4181,10 @@
  },
  "Q257411": {
   "name": "Ethiopia men's national football team",
+  "club": false
+ },
+ "Q271753": {
+  "name": "Myanmar men's national football team",
   "club": false
  },
  "Q477067": {
@@ -4147,18 +4231,6 @@
   "name": "JS Kabylie",
   "club": true
  },
- "Q1192755": {
-  "name": "FC Viikingit",
-  "club": true
- },
- "Q1252167": {
-  "name": "Horoya AC",
-  "club": true
- },
- "Q1270133": {
-  "name": "Denmark national under-17 football team",
-  "club": false
- },
  "Q1535349": {
   "name": "Nchanga Rangers F.C.",
   "club": true
@@ -4191,6 +4263,10 @@
   "name": "FC Moravia FCM",
   "club": true
  },
+ "Q7082076": {
+  "name": "Hanthawaddy United F.C.",
+  "club": true
+ },
  "Q8065695": {
   "name": "Zambia national under-20 football team",
   "club": false
@@ -4203,8 +4279,16 @@
   "name": "Preah Khan Reach Svay Rieng F.C.",
   "club": true
  },
+ "Q16845419": {
+  "name": "Myanmar national under-20 football team",
+  "club": false
+ },
  "Q18129096": {
   "name": "FC Voluntari",
+  "club": true
+ },
+ "Q19578010": {
+  "name": "T.C. Sports Club",
   "club": true
  },
  "Q20994357": {
@@ -4223,10 +4307,6 @@
   "name": "Stoke City F.C.",
   "club": true
  },
- "Q29108": {
-  "name": "FC Zenit Saint Petersburg",
-  "club": true
- },
  "Q94571": {
   "name": "Club Blooming",
   "club": true
@@ -4235,12 +4315,16 @@
   "name": "F.C. Hansa Rostock",
   "club": true
  },
- "Q271753": {
-  "name": "Myanmar men's national football team",
-  "club": false
+ "Q288419": {
+  "name": "Foot club de Pau",
+  "club": true
  },
  "Q298294": {
   "name": "AS Denguélé",
+  "club": true
+ },
+ "Q602918": {
+  "name": "Vasalunds IF",
   "club": true
  },
  "Q845772": {
@@ -4279,10 +4363,6 @@
   "name": "Kosovo national under-21 association football team",
   "club": false
  },
- "Q7082076": {
-  "name": "Hanthawaddy United F.C.",
-  "club": true
- },
  "Q7709265": {
   "name": "Thailand national under-20 football team",
   "club": false
@@ -4291,24 +4371,12 @@
   "name": "New York City FC",
   "club": true
  },
- "Q16840338": {
-  "name": "NorthEast United FC",
-  "club": true
- },
- "Q16845419": {
-  "name": "Myanmar national under-20 football team",
-  "club": false
- },
  "Q17518847": {
   "name": "Vitória S.C. B",
   "club": true
  },
  "Q18378129": {
   "name": "Tacoma Defiance",
-  "club": true
- },
- "Q19578010": {
-  "name": "T.C. Sports Club",
   "club": true
  },
  "Q19446": {
@@ -4323,10 +4391,6 @@
   "name": "Hapoel Tel Aviv F.C.",
   "club": true
  },
- "Q288419": {
-  "name": "Foot club de Pau",
-  "club": true
- },
  "Q296266": {
   "name": "Armée Patriotique Rwandaise F.C.",
   "club": true
@@ -4339,16 +4403,16 @@
   "name": "Adana Demirspor",
   "club": true
  },
- "Q602918": {
-  "name": "Vasalunds IF",
-  "club": true
- },
  "Q749589": {
   "name": "Go Ahead Eagles",
   "club": true
  },
  "Q750434": {
   "name": "FC Kryvbas Kryvyi Rih",
+  "club": true
+ },
+ "Q780539": {
+  "name": "Atlético Madrid B",
   "club": true
  },
  "Q813571": {
@@ -4362,10 +4426,6 @@
  "Q854167": {
   "name": "Fortuna Sittard",
   "club": true
- },
- "Q1049171": {
-  "name": "England national under-18 association football team",
-  "club": false
  },
  "Q1718824": {
   "name": "K.M.S.K. Deinze",
@@ -4390,10 +4450,6 @@
  "Q3493033": {
   "name": "Speranța Nisporeni",
   "club": true
- },
- "Q4201740": {
-  "name": "England national under-16 association football team",
-  "club": false
  },
  "Q5014111": {
   "name": "CR Vasco da Gama",
@@ -4423,12 +4479,20 @@
   "name": "F.C. Lorient",
   "club": true
  },
+ "Q127923": {
+  "name": "Oriente Petrolero",
+  "club": true
+ },
  "Q210025": {
   "name": "FC Nordsjælland",
   "club": true
  },
- "Q780539": {
-  "name": "Atlético Madrid B",
+ "Q316497": {
+  "name": "Germany national under-20 football team",
+  "club": false
+ },
+ "Q760736": {
+  "name": "Stade Lavallois",
   "club": true
  },
  "Q918609": {
@@ -4451,6 +4515,10 @@
   "name": "Harimau Muda B",
   "club": true
  },
+ "Q18712100": {
+  "name": "AIFF Elite Academy",
+  "club": true
+ },
  "Q18712404": {
   "name": "FC Maktaaral",
   "club": true
@@ -4471,24 +4539,12 @@
   "name": "Netherlands national under-16 association football team",
   "club": false
  },
- "Q127923": {
-  "name": "Oriente Petrolero",
-  "club": true
- },
  "Q289286": {
   "name": "AC Horsens",
   "club": true
  },
- "Q316497": {
-  "name": "Germany national under-20 football team",
-  "club": false
- },
  "Q725367": {
   "name": "Shanghai Shenhua F.C.",
-  "club": true
- },
- "Q760736": {
-  "name": "Stade Lavallois",
   "club": true
  },
  "Q994701": {
@@ -4539,10 +4595,6 @@
   "name": "S.C. Braga B",
   "club": true
  },
- "Q18712100": {
-  "name": "AIFF Elite Academy",
-  "club": true
- },
  "Q6463": {
   "name": "FC St. Pauli",
   "club": true
@@ -4563,8 +4615,20 @@
   "name": "Zob Ahan F.C.",
   "club": true
  },
+ "Q276076": {
+  "name": "Palestine men's national football team",
+  "club": false
+ },
+ "Q304792": {
+  "name": "Abahani Limited Dhaka",
+  "club": true
+ },
  "Q680770": {
   "name": "FC UTA Arad",
+  "club": true
+ },
+ "Q872702": {
+  "name": "Montevideo Wanderers Fútbol Club",
   "club": true
  },
  "Q1023214": {
@@ -4582,6 +4646,10 @@
  "Q2280399": {
   "name": "Club Sportivo Sergipe",
   "club": true
+ },
+ "Q2442864": {
+  "name": "Uruguay national under-20 football team",
+  "club": false
  },
  "Q2462207": {
   "name": "Argentina national under-23 football team",
@@ -4611,24 +4679,12 @@
   "name": "Derby County F.C.",
   "club": true
  },
- "Q19585": {
-  "name": "Royal Charleroi S.C.",
-  "club": true
- },
  "Q153539": {
   "name": "SpVgg Greuther Fürth",
   "club": true
  },
  "Q203573": {
   "name": "Bursaspor",
-  "club": true
- },
- "Q276076": {
-  "name": "Palestine men's national football team",
-  "club": false
- },
- "Q304792": {
-  "name": "Abahani Limited Dhaka",
   "club": true
  },
  "Q545174": {
@@ -4643,28 +4699,32 @@
   "name": "Bangkok United F.C.",
   "club": true
  },
- "Q872702": {
-  "name": "Montevideo Wanderers Fútbol Club",
-  "club": true
- },
  "Q1131109": {
   "name": "Maidenhead United F.C.",
+  "club": true
+ },
+ "Q1134557": {
+  "name": "Skiljebo SK",
   "club": true
  },
  "Q1450568": {
   "name": "France national under-17 association football team",
   "club": false
  },
+ "Q1835695": {
+  "name": "Selangor F.C.",
+  "club": true
+ },
  "Q2331232": {
   "name": "Italy national under-17 football team",
   "club": false
  },
- "Q2442864": {
-  "name": "Uruguay national under-20 football team",
-  "club": false
- },
  "Q2760357": {
   "name": "Club 9 de Octubre",
+  "club": true
+ },
+ "Q3025731": {
+  "name": "Dhofar Club",
   "club": true
  },
  "Q3590437": {
@@ -4679,6 +4739,10 @@
   "name": "Poland national under-20 football team",
   "club": false
  },
+ "Q126334": {
+  "name": "RC Strasbourg Alsace",
+  "club": true
+ },
  "Q328658": {
   "name": "Le Havre AC",
   "club": true
@@ -4691,17 +4755,9 @@
   "name": "SD Beasain",
   "club": true
  },
- "Q1134557": {
-  "name": "Skiljebo SK",
-  "club": true
- },
  "Q1481307": {
   "name": "Spain Olympic football team",
   "club": false
- },
- "Q1835695": {
-  "name": "Selangor F.C.",
-  "club": true
  },
  "Q2402747": {
   "name": "Brazil national under-17 football team",
@@ -4719,8 +4775,8 @@
   "name": "Al-Nasr SC",
   "club": true
  },
- "Q3025731": {
-  "name": "Dhofar Club",
+ "Q3269948": {
+  "name": "Ayeyawady United F.C.",
   "club": true
  },
  "Q4115917": {
@@ -4729,10 +4785,6 @@
  },
  "Q48941": {
   "name": "Fleetwood Town F.C.",
-  "club": true
- },
- "Q126334": {
-  "name": "RC Strasbourg Alsace",
   "club": true
  },
  "Q202093": {
@@ -4746,6 +4798,10 @@
  "Q212708": {
   "name": "Bohemian F.C.",
   "club": true
+ },
+ "Q236014": {
+  "name": "Cuban men's national football team",
+  "club": false
  },
  "Q240783": {
   "name": "AC Omonia",
@@ -4775,10 +4831,6 @@
   "name": "Club Always Ready",
   "club": true
  },
- "Q3269948": {
-  "name": "Ayeyawady United F.C.",
-  "club": true
- },
  "Q3873967": {
   "name": "Canada Olympic soccer team",
   "club": false
@@ -4799,20 +4851,12 @@
   "name": "Dewa United F.C.",
   "club": true
  },
- "Q236014": {
-  "name": "Cuban men's national football team",
-  "club": false
- },
  "Q254231": {
   "name": "Mozambique men's national football team",
   "club": false
  },
  "Q503317": {
   "name": "Dijon FCO",
-  "club": true
- },
- "Q522283": {
-  "name": "Red Star F.C.",
   "club": true
  },
  "Q1067750": {
@@ -4841,6 +4885,10 @@
  },
  "Q283981": {
   "name": "Al-Khor Sports Club",
+  "club": true
+ },
+ "Q319136": {
+  "name": "St. Mirren F.C.",
   "club": true
  },
  "Q460724": {
@@ -4911,10 +4959,6 @@
   "name": "FC Barcelona Atlètic",
   "club": true
  },
- "Q319136": {
-  "name": "St. Mirren F.C.",
-  "club": true
- },
  "Q319699": {
   "name": "Germany national under-17 association football team",
   "club": false
@@ -4937,6 +4981,10 @@
  },
  "Q2713491": {
   "name": "Spain national under-19 football team",
+  "club": false
+ },
+ "Q2752922": {
+  "name": "England national under-17 association football team",
   "club": false
  },
  "Q3589784": {
@@ -4967,44 +5015,16 @@
   "name": "Jong Genk",
   "club": true
  },
- "Q2752922": {
-  "name": "England national under-17 association football team",
-  "club": false
- },
- "Q3589950": {
-  "name": "Ivory Coast Olympic football team",
-  "club": false
- },
- "Q3873550": {
-  "name": "Switzerland national under-20 association football team",
-  "club": false
- },
- "Q118900487": {
-  "name": "Al-Karma SC",
-  "club": true
- },
  "Q19648": {
   "name": "Fenerbahçe SK",
-  "club": true
- },
- "Q24719": {
-  "name": "Roda JC Kerkrade",
   "club": true
  },
  "Q43134": {
   "name": "Galatasaray SK",
   "club": false
  },
- "Q176795": {
-  "name": "Karşıyaka S.K.",
-  "club": true
- },
  "Q187091": {
   "name": "FC Wil 1900",
-  "club": true
- },
- "Q285722": {
-  "name": "Gaziantepspor",
   "club": true
  },
  "Q303121": {
@@ -5015,24 +5035,12 @@
   "name": "Sivasspor",
   "club": true
  },
- "Q402038": {
-  "name": "Hebei F.C.",
-  "club": true
- },
- "Q447191": {
-  "name": "Altınordu F.K.",
-  "club": true
- },
  "Q556570": {
   "name": "Ankaraspor",
   "club": true
  },
  "Q665920": {
   "name": "VfB Lübeck",
-  "club": true
- },
- "Q748445": {
-  "name": "Eskişehirspor",
   "club": true
  },
  "Q929360": {
@@ -5047,20 +5055,40 @@
   "name": "Cizrespor",
   "club": true
  },
- "Q6036237": {
-  "name": "Sivas Dört Eylül Belediyespor",
+ "Q3589950": {
+  "name": "Ivory Coast Olympic football team",
+  "club": false
+ },
+ "Q3873550": {
+  "name": "Switzerland national under-20 association football team",
+  "club": false
+ },
+ "Q118900487": {
+  "name": "Al-Karma SC",
   "club": true
  },
- "Q16465992": {
-  "name": "Sidespor",
+ "Q24719": {
+  "name": "Roda JC Kerkrade",
+  "club": true
+ },
+ "Q176795": {
+  "name": "Karşıyaka S.K.",
+  "club": true
+ },
+ "Q285722": {
+  "name": "Gaziantepspor",
   "club": true
  },
  "Q301332": {
   "name": "Kardemir Karabükspor",
   "club": true
  },
- "Q324983": {
-  "name": "SV Heimstetten",
+ "Q402038": {
+  "name": "Hebei F.C.",
+  "club": true
+ },
+ "Q447191": {
+  "name": "Altınordu F.K.",
   "club": true
  },
  "Q459148": {
@@ -5071,12 +5099,12 @@
   "name": "MKE Ankaragücü",
   "club": true
  },
- "Q630348": {
-  "name": "Bucaspor",
-  "club": true
- },
  "Q643107": {
   "name": "Denizlispor",
+  "club": true
+ },
+ "Q748445": {
+  "name": "Eskişehirspor",
   "club": true
  },
  "Q805909": {
@@ -5085,10 +5113,6 @@
  },
  "Q806415": {
   "name": "Bandırmaspor",
-  "club": true
- },
- "Q1351072": {
-  "name": "Fethiyespor",
   "club": true
  },
  "Q1967856": {
@@ -5103,6 +5127,34 @@
   "name": "Erzurumspor F.K.",
   "club": true
  },
+ "Q6036237": {
+  "name": "Sivas Dört Eylül Belediyespor",
+  "club": true
+ },
+ "Q16465992": {
+  "name": "Sidespor",
+  "club": true
+ },
+ "Q131215": {
+  "name": "SK Rapid Wien",
+  "club": true
+ },
+ "Q324983": {
+  "name": "SV Heimstetten",
+  "club": true
+ },
+ "Q630348": {
+  "name": "Bucaspor",
+  "club": true
+ },
+ "Q1127498": {
+  "name": "Elazığspor",
+  "club": true
+ },
+ "Q1351072": {
+  "name": "Fethiyespor",
+  "club": true
+ },
  "Q3536136": {
   "name": "Trabzonspor",
   "club": true
@@ -5115,32 +5167,16 @@
   "name": "Turkey national under-18 football team",
   "club": false
  },
- "Q131215": {
-  "name": "SK Rapid Wien",
-  "club": true
- },
- "Q417685": {
-  "name": "Akhisar Belediyespor",
-  "club": true
- },
- "Q1127498": {
-  "name": "Elazığspor",
-  "club": true
- },
  "Q153535": {
   "name": "Alemannia Aachen",
   "club": true
  },
- "Q211753": {
-  "name": "IF Elfsborg",
-  "club": true
- },
- "Q291297": {
-  "name": "Kayseri Erciyesspor",
-  "club": true
- },
  "Q392310": {
   "name": "LASK Linz",
+  "club": true
+ },
+ "Q417685": {
+  "name": "Akhisar Belediyespor",
   "club": true
  },
  "Q513237": {
@@ -5150,6 +5186,34 @@
  "Q514714": {
   "name": "Netherlands national under-19 football team",
   "club": false
+ },
+ "Q13397712": {
+  "name": "Borussia Mönchengladbach II",
+  "club": true
+ },
+ "Q16145357": {
+  "name": "Alemannia Aachen II",
+  "club": true
+ },
+ "Q26955857": {
+  "name": "Fortuna Düsseldorf II",
+  "club": true
+ },
+ "Q97927396": {
+  "name": "VfL Osnabrück",
+  "club": true
+ },
+ "Q18519": {
+  "name": "Lincoln City F.C.",
+  "club": true
+ },
+ "Q211753": {
+  "name": "IF Elfsborg",
+  "club": true
+ },
+ "Q291297": {
+  "name": "Kayseri Erciyesspor",
+  "club": true
  },
  "Q603333": {
   "name": "Gefle IF",
@@ -5163,48 +5227,20 @@
   "name": "Germany national under-16 football team",
   "club": false
  },
- "Q13397712": {
-  "name": "Borussia Mönchengladbach II",
-  "club": true
- },
- "Q16145357": {
-  "name": "Alemannia Aachen II",
+ "Q12808521": {
+  "name": "Antalyaspor",
   "club": true
  },
  "Q18145129": {
   "name": "Tirespor 1922",
   "club": true
  },
- "Q26955857": {
-  "name": "Fortuna Düsseldorf II",
-  "club": true
- },
- "Q97927396": {
-  "name": "VfL Osnabrück",
+ "Q28214543": {
+  "name": "Trabzonspor",
   "club": true
  },
  "Q133730498": {
   "name": "Essamaye FC",
-  "club": true
- },
- "Q18519": {
-  "name": "Lincoln City F.C.",
-  "club": true
- },
- "Q541289": {
-  "name": "HB Køge",
-  "club": true
- },
- "Q4825450": {
-  "name": "Austria national under-17 association football team",
-  "club": false
- },
- "Q12808521": {
-  "name": "Antalyaspor",
-  "club": true
- },
- "Q28214543": {
-  "name": "Trabzonspor",
   "club": true
  },
  "Q136566641": {
@@ -5217,6 +5253,18 @@
  },
  "Q364698": {
   "name": "Cercle Brugge K.S.V.",
+  "club": true
+ },
+ "Q541289": {
+  "name": "HB Køge",
+  "club": true
+ },
+ "Q4825450": {
+  "name": "Austria national under-17 association football team",
+  "club": false
+ },
+ "Q105320031": {
+  "name": "Attram De Visser Soccer Academy",
   "club": true
  }
 }

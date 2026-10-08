@@ -5,6 +5,8 @@ import json
 import re
 import sys
 import time
+from datetime import datetime
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 import pandas as pd
@@ -21,6 +23,29 @@ BATCH_SIZE = 150
 # Bu değerden küçükse oyuncu emekli/kulüpsüz sayılır ve `current_club_name` ESKİ kulüp olduğu için kullanılmaz.
 CURRENT_SEASON = 2025
 RETIRED_LABEL = "Emekli / kulüpsüz"
+# Süper Lig kulüplerinin tutarlı görünen adları (Transfermarkt ID -> ad)
+TR_CLUB_NAMES = {
+    36: "Fenerbahçe", 114: "Beşiktaş", 141: "Galatasaray", 449: "Trabzonspor", 120: "Kocaelispor",
+    126: "Çaykur Rizespor", 152: "Samsunspor", 589: "Antalyaspor", 820: "Gençlerbirliği", 924: "İstanbulspor",
+    1467: "Göztepe", 2293: "Konyaspor", 2381: "Sivasspor", 2832: "Gaziantep FK", 3205: "Kayserispor",
+    6646: "Fatih Karagümrük", 6890: "Başakşehir", 7160: "Eyüpspor", 10484: "Kasımpaşa", 11282: "Alanyaspor",
+    39722: "Erzurumspor FK", 44006: "Bodrum FK",
+}
+
+
+def _club_key(name):
+    """Takım adlarını karşılaştırmak için sadeleştir (aksan, FK/SK/FC gibi ekler yok)."""
+    import unicodedata
+    x = unicodedata.normalize("NFKD", str(name).lower()).encode("ascii", "ignore").decode()
+    x = re.sub(r"\b(fk|sk|fc|s\.k\.|f\.c\.|cf|ac|as|sc|jk|j\.k\.|jimnastik|kulubu|spor|club|de|futbol|a\.s\.)\b", " ", x)
+    return re.sub(r"[^a-z0-9]+", "", x)
+
+
+def same_club(a, b):
+    ka, kb = _club_key(a), _club_key(b)
+    return bool(ka and kb and (ka in kb or kb in ka))
+
+
 OVERRIDES_FILE = "team_overrides.json"   # {"Oyuncu Adı": "Güncel Takım"}  (transferleri elle düzeltmek için)
 
 
@@ -50,6 +75,61 @@ def load_transfermarkt(path):
     return df
 
 
+def snapshot_date(src):
+    """TM CSV'sinin ne zamanki veri olduğunu tahmin et (URL: Last-Modified, yerel dosya: mtime)."""
+    try:
+        if str(src).startswith("http"):
+            r = requests.head(src, allow_redirects=True, timeout=30, headers={"User-Agent": USER_AGENT})
+            lm = r.headers.get("Last-Modified")
+            if lm:
+                return parsedate_to_datetime(lm).strftime("%Y-%m-%d")
+        else:
+            return datetime.fromtimestamp(Path(src).stat().st_mtime).strftime("%Y-%m-%d")
+    except Exception:
+        pass
+    return None
+
+
+SQUADS_CACHE = "tm_squads_cache.json"   # {kulüp id: [oyuncu id, ...]}
+TM_SQUAD_URL = "https://www.transfermarkt.com.tr/-/kader/verein/{cid}"
+BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+              "(KHTML, like Gecko) Chrome/124.0 Safari/537.36")
+
+
+def fetch_tm_squads(club_ids, refresh=False, cache_path=SQUADS_CACHE):
+    """Transfermarkt kadro sayfalarından GÜNCEL kadroları çeker -> {kulüp id (str): [oyuncu id (str)]}.
+    CSV bayat olsa bile en doğru kaynak budur. Çekilemeyen kulüpler sonuca girmez
+    (o kulüpler için eski mantığa: CSV / Wikidata'ya düşülür). Sonuçlar önbelleğe yazılır."""
+    cache = _load(cache_path, refresh)
+    todo = [c for c in club_ids if str(c) not in cache]
+    print(f"[SQUAD] önbellekte {len(cache)} kulüp var, çekilecek: {len(todo)}")
+    for cid in todo:
+        try:
+            r = requests.get(TM_SQUAD_URL.format(cid=cid), timeout=30,
+                             headers={"User-Agent": BROWSER_UA, "Accept-Language": "tr-TR,tr;q=0.9"})
+            if r.status_code != 200:
+                print(f"[SQUAD][UYARI] {TR_CLUB_NAMES.get(cid, cid)}: HTTP {r.status_code}, atlandı")
+                time.sleep(3)
+                continue
+            # Oyuncu satırları <tr class="odd"> / <tr class="even">; her satırdaki İLK oyuncu linki o oyuncudur
+            chunks = re.split(r'<tr class="(?:odd|even)"', r.text)[1:]
+            ids = []
+            for ch in chunks:
+                m = re.search(r"/profil/spieler/(\d+)", ch)
+                if m and m.group(1) not in ids:
+                    ids.append(m.group(1))
+            if len(ids) < 10:
+                print(f"[SQUAD][UYARI] {TR_CLUB_NAMES.get(cid, cid)}: sadece {len(ids)} oyuncu bulundu, sayfa yapısı değişmiş olabilir, atlandı")
+            else:
+                cache[str(cid)] = ids
+                print(f"[SQUAD] {TR_CLUB_NAMES.get(cid, cid)}: {len(ids)} oyuncu")
+        except requests.RequestException as e:
+            print(f"[SQUAD][UYARI] {TR_CLUB_NAMES.get(cid, cid)}: ağ hatası ({e}), atlandı")
+        _save(cache_path, cache)
+        time.sleep(3)   # Transfermarkt'a nazik ol
+    return cache
+
+
 def num(x):
     """NaN / boş değerleri None yapar, sayıyı int'e çevirir."""
     if x is None or pd.isna(x):
@@ -68,7 +148,8 @@ TURKISH_NAMES = {"Türkiye", "Turkey"}   # Transfermarkt iki yazımı da kullan�
 BIG_CLUB_IDS = [36, 114, 141, 449]
 
 
-def pick_candidates(df, min_value_m, min_caps, tr_min_value_m=None, tr_min_caps=None, club_ids=None, current_season=CURRENT_SEASON):
+def pick_candidates(df, min_value_m, min_caps, tr_min_value_m=None, tr_min_caps=None, club_ids=None, current_season=CURRENT_SEASON,
+                    extra_ids=None):
     """Ünlü liste (_core) + Türk oyuncular için daha düşük eşikli ek liste (_tr).
     Türk ek oyuncular oyunda TAHMİN edilebilir ama hedef futbolcu olarak seçilmez (guessOnly)."""
     peak = df.get("highest_market_value_in_eur")
@@ -96,6 +177,8 @@ def pick_candidates(df, min_value_m, min_caps, tr_min_value_m=None, tr_min_caps=
     if club_ids and "current_club_id" in df:
         active = df["last_season"].fillna(0) >= current_season if "last_season" in df else True
         club_mask = df["current_club_id"].isin(club_ids) & active
+    if extra_ids:    # canlı kadro sayfasından gelen oyuncular (CSV'de hâlâ eski kulübü yazan yeni transferler)
+        club_mask = club_mask | df["player_id"].isin(extra_ids)
 
     out = df[core | tr_mask | club_mask].copy()
     out["_core"] = core[out.index]
@@ -224,7 +307,8 @@ def pick_current_team(rows, clubs):
     ok = [(t, s or "") for t, s in rows if clubs.get(t, {}).get("club")]
     if not ok:
         return None
-    return clubs[max(ok, key=lambda r: r[1])[0]]["name"]
+    t, st = max(ok, key=lambda r: r[1])
+    return {"team": clubs[t]["name"], "start": st}
 
 
 def _load(path, refresh):
@@ -241,7 +325,8 @@ def fetch_current_teams(qids, cache_path=TEAMS_CACHE, refresh=False, clubs_path=
     Her parti bitince önbelleğe yazılır; yarıda kesilirse (Ctrl+C / ağ hatası) kaldığı yerden devam eder."""
     cache = _load(cache_path, refresh)
     clubs = _load(clubs_path, refresh)
-    todo = [q for q in dict.fromkeys(qids) if q and q not in cache]
+    # Eski biçimde (sadece takım adı, başlangıç tarihi yok) kaydedilmiş girişler yeniden çekilir
+    todo = [q for q in dict.fromkeys(qids) if q and (q not in cache or isinstance(cache[q], str))]
     print(f"[TEAM] önbellekte {len(cache)} oyuncu var, çekilecek: {len(todo)}")
     for start in range(0, len(todo), TEAM_BATCH):
         batch = todo[start:start + TEAM_BATCH]
@@ -350,6 +435,59 @@ def peak_value_m(eur):
 QUESTION_FIELDS = ["intlGoals", "intlCaps", "heightCm", "birthYear", "peakMarketValueM", "birthPlace"]
 
 
+TEAM_REPORT = []   # merge() her oyuncunun takımının nereden geldiğini buraya yazar -> team_report.csv
+
+
+def write_team_report(path="team_report.csv"):
+    import csv
+    cols = ["oyuncu", "sonuc", "kaynak", "wikidata_takim", "tm_takim", "tm_son_sezon", "sadece_tahmin"]
+    with open(path, "w", encoding="utf-8-sig", newline="") as f:     # utf-8-sig: Excel Türkçe karakterleri doğru açar
+        wr = csv.DictWriter(f, fieldnames=cols, delimiter=";")
+        wr.writeheader()
+        for r in TEAM_REPORT:
+            wr.writerow({c: r.get(c, "") for c in cols})
+    from collections import Counter
+    c = Counter(r["kaynak"] for r in TEAM_REPORT)
+    print(f"[TEAM] takım kaynağı dağılımı: " + " | ".join(f"{k}: {v}" for k, v in c.most_common()))
+    print(f"[TEAM] ayrıntı: {path} (Excel'de aç; wikidata_takim ile tm_takim farklıysa orada bakabilirsin)")
+
+
+def explain_player(tm, wd, query, overrides):
+    """--why 'isim': tek oyuncunun takımının neden öyle çıktığını CANLI Wikidata sorgusuyla gösterir."""
+    def norm(x):
+        import unicodedata
+        return unicodedata.normalize("NFKD", str(x).lower()).encode("ascii", "ignore").decode()
+    q = norm(query)
+    hits = tm[tm["name"].fillna("").map(lambda n: q in norm(n))]
+    if hits.empty:
+        print(f"[WHY] '{query}' Transfermarkt CSV'sinde bulunamadı.")
+        return
+    for _, r in hits.head(3).iterrows():
+        tid = str(int(r["player_id"]))
+        rec = wd.get(tid) or {}
+        print("=" * 70)
+        print(f"{r['name']}  (TM id {tid})")
+        print(f"  Transfermarkt: kulüp = {r.get('current_club_name')} | son sezon = {r.get('last_season')} | sözleşme = {r.get('contract_expiration_date')}")
+        print(f"  Wikidata kaydı: {rec.get('qid') or 'YOK (Wikidata ile eşleşmedi)'}")
+        if rec.get("qid"):
+            rows = {}
+            for b in run_sparql(build_open_team_query([rec["qid"]])):
+                rows.setdefault(qid_of(val(b, "team")), val(b, "start"))
+            clubs = parse_club_info(run_sparql(build_club_info_query(sorted(rows)))) if rows else {}
+            print("  Wikidata'da BİTİŞ TARİHİ OLMAYAN takım kayıtları:")
+            if not rows:
+                print("    (hiç yok -> Wikidata güncel kulüp bilmiyor, Transfermarkt'a düşülür)")
+            for t, st in sorted(rows.items(), key=lambda x: x[1] or "", reverse=True):
+                c = clubs.get(t, {})
+                kind = "KULÜP" if c.get("club") else "kulüp değil/milli takım -> elenir"
+                print(f"    {c.get('name') or t:35s} başlangıç: {(st or 'tarih yok')[:10]:10s} [{kind}]")
+            pk = pick_current_team(list(rows.items()), clubs)
+            print(f"  -> Wikidata'nın seçeceği takım: {pk['team'] if pk else '(yok)'}"
+                  f"{' (başlangıç ' + pk['start'][:10] + ')' if pk and pk['start'] else ''}")
+        if r["name"].strip() in overrides:
+            print(f"  -> team_overrides.json: {overrides[r['name'].strip()]}")
+
+
 def has_foreign_script(name):
     """Latin dışı harf var mı? (Wikidata'da bazen Yunan 'Α' gibi benzer harfler karışıyor: 'Αrda Güler')"""
     import unicodedata
@@ -364,9 +502,12 @@ def has_foreign_script(name):
 
 
 def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, overrides=None, wd_teams=None,
-          tr_min_sitelinks=0, extra_min_fields=1):
+          tr_min_sitelinks=0, extra_min_fields=1, wd_newer_than=None, wd_undated_wins=False,
+          squad_map=None, squad_clubs=None):
     overrides = overrides or {}
     wd_teams = wd_teams or {}
+    squad_map = squad_map or {}        # {oyuncu id: kulüp id}  (Transfermarkt güncel kadro sayfalarından)
+    squad_clubs = squad_clubs or set() # kadrosu başarıyla çekilen kulüp id'leri
     players = []
     skipped_fame = 0
     for _, row in tm_df.iterrows():
@@ -407,19 +548,69 @@ def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, o
         # TAKIM ÖNCELİĞİ:
         #  1) team_overrides.json (elle düzeltme)
         #  2) Transfermarkt'a göre 2+ sezondur hiç oynamamış => emekli / kulüpsüz
-        #  3) Wikidata'daki güncel (bitiş tarihsiz) kulüp
-        #  4) Transfermarkt'ın current_club_name'i (son sezonu güncelse), değilse emekli / kulüpsüz
+        #  3) TM'ye göre aktif + kulüp belli => Wikidata, TM'den FARKLI bir kulüp gösteriyorsa ve
+        #     (başlangıcı CSV tarihinden yeni VEYA --wd-undated-wins ile tarihsizse) Wikidata; yoksa TM
+        #  4) TM'de kulüp yok => Wikidata'daki güncel (bitiş tarihsiz) kulüp
         last_season = num(row.get("last_season"))
         inactive_long = last_season is not None and last_season < current_season - 1
         inactive_any = last_season is not None and last_season < current_season
-        wd_team = wd_teams.get((w or {}).get("qid")) if w else None
-        if inactive_long:
-            team = RETIRED_LABEL if team else None
+        info = wd_teams.get((w or {}).get("qid")) if w else None
+        info = info if isinstance(info, dict) else None          # eski biçim (sadece ad) = bilgi yok
+        wd_team = info["team"] if info else None
+        wd_start = (info or {}).get("start") or ""
+        tm_team = team
+        # Transfermarkt kulübü: Süper Lig'de tutarlı ad; yoksa CSV'deki ad
+        club_id = num(row.get("current_club_id"))
+        tm_clean = TR_CLUB_NAMES.get(int(club_id)) if club_id is not None and int(club_id) in TR_CLUB_NAMES else tm_team
+        cutoff = (wd_newer_than or f"{current_season}-07-01")[:10]
+        squad_cid = squad_map.get(int(tm_id)) if tm_id.isdigit() else None
+        tm_cid = int(club_id) if club_id is not None else None
+
+        if squad_cid is not None:
+            # Güncel kadro sayfasında görünüyor => en güvenilir kaynak bu (CSV bayat olsa bile)
+            team = TR_CLUB_NAMES.get(squad_cid) or tm_clean
+            source = "transfermarkt kadro sayfası (canlı)"
+        elif inactive_long:
+            team = RETIRED_LABEL if tm_team else None
+            source = "emekli (TM: 2+ sezondur oynamadı)"
+        elif tm_team and not inactive_any:
+            # CSV'ye göre Süper Lig kulübünde ama o kulübün GÜNCEL kadrosunda yok => ayrılmış
+            left_club = tm_cid is not None and tm_cid in squad_clubs
+            differs = bool(wd_team) and not same_club(wd_team, tm_team)
+            wd_is_newer = differs and (
+                left_club
+                or (wd_start and wd_start[:10] >= cutoff)
+                or (not wd_start and wd_undated_wins)
+            )
+            if wd_is_newer:
+                team = wd_team
+                if left_club:
+                    source = "wikidata (CSV'deki kulübün güncel kadrosunda yok)"
+                else:
+                    source = f"wikidata (CSV'den yeni transfer, başlangıç {wd_start[:10] or 'tarihsiz'})"
+            else:
+                team = tm_clean
+                if differs:
+                    source = f"transfermarkt (Wikidata farklı: {wd_team}, ama başlangıcı eski/tarihsiz)"
+                elif left_club:
+                    source = "transfermarkt (KONTROL: kulübün güncel kadrosunda yok, yeni takımı bilinmiyor)"
+                else:
+                    source = "transfermarkt"
         elif wd_team:
             team = wd_team
-        elif team and inactive_any:
+            source = "wikidata (TM'de güncel kulüp yok)"
+        elif tm_team and inactive_any:
             team = RETIRED_LABEL
-        team = overrides.get(name.strip(), team)
+            source = "emekli (TM: son sezon eski)"
+        else:
+            team = tm_clean
+            source = "transfermarkt (Wikidata kaydı yok)" if not w else "transfermarkt"
+        if name.strip() in overrides:
+            team = overrides[name.strip()]
+            source = "team_overrides.json"
+        TEAM_REPORT.append({"oyuncu": name.strip(), "tm_takim": tm_team or "", "tm_son_sezon": last_season,
+                            "wikidata_takim": wd_team or "", "sonuc": team or "", "kaynak": source,
+                            "sadece_tahmin": "evet" if guess_only else "hayır"})
 
         birth_year = year_of((w or {}).get("dob")) or year_of(str(row.get("date_of_birth") or ""))
         height = num(row.get("height_in_cm")) or norm_height((w or {}).get("height"))
@@ -491,12 +682,41 @@ def main():
     ap.add_argument("--no-wd-teams", action="store_true", help="Takımı Wikidata'dan çekme, sadece Transfermarkt kullan")
     ap.add_argument("--current-season", type=int, default=CURRENT_SEASON,
                     help="Güncel sezonun başlangıç yılı (2025 = 2025/26). Bundan eski last_season => emekli/kulüpsüz")
+    ap.add_argument("--wd-newer-than", metavar="YYYY-AA-GG", default=None,
+                    help="Wikidata takımı, TM'den farklıysa ancak başlangıç tarihi bundan yeniyse geçer "
+                         "(varsayılan: CSV'nin tahmini tarihi, bulunamazsa güncel sezonun 1 Temmuz'u)")
+    ap.add_argument("--wd-undated-wins", action="store_true",
+                    help="Wikidata'daki farklı ve TARİHSİZ açık kulüp, TM'nin kulübünü geçsin (bayat CSV için)")
+    ap.add_argument("--no-squads", action="store_true",
+                    help="Transfermarkt kadro sayfalarından güncel kadro çekmeyi kapat")
+    ap.add_argument("--refresh-squads", action="store_true", help="Kadro sayfalarını önbelleği yok sayıp yeniden çek")
+    ap.add_argument("--why", metavar="İSİM", help="Tek oyuncunun takımı neden öyle çıktı? (canlı Wikidata sorgusu, oyun verisi üretmez)")
     a = ap.parse_args()
 
     tm = load_transfermarkt(a.tm_csv)
+    snap = snapshot_date(a.tm_csv or TM_PLAYERS_URL)
+    print(f"[TM] CSV tarihi (tahmini): {snap or 'bilinmiyor'}")
+    if not a.wd_newer_than and snap:
+        a.wd_newer_than = snap
+
+    if a.why:
+        wd_c = json.loads(Path(a.cache).read_text(encoding="utf-8")) if Path(a.cache).exists() else {}
+        explain_player(tm, wd_c, a.why, load_team_overrides())
+        return
+    club_ids = [int(x) for x in a.clubs.split(",") if x.strip()]
+
+    # Güncel kadrolar (Süper Lig kulüpleri): CSV bayatsa asıl düzeltme burada
+    squads = {}
+    if not a.no_squads:
+        squads = _load(SQUADS_CACHE, False) if a.offline else fetch_tm_squads(list(TR_CLUB_NAMES), a.refresh_squads)
+    squad_map = {int(p): int(c) for c, ids in squads.items() for p in ids}
+    squad_clubs = {int(c) for c in squads}
+    big_extra = {int(p) for c in club_ids for p in squads.get(str(c), [])}
+    print(f"[SQUAD] kadrosu alınan kulüp: {len(squad_clubs)}/{len(TR_CLUB_NAMES)} | toplam oyuncu: {len(squad_map)}")
+
     cand = pick_candidates(tm, a.min_value, a.min_caps,
                            None if a.no_tr_extra else a.tr_min_value, None if a.no_tr_extra else a.tr_min_caps,
-                           [int(x) for x in a.clubs.split(",") if x.strip()], a.current_season)
+                           club_ids, a.current_season, big_extra)
     wd = fetch_wikidata(cand["player_id"].dropna().astype(int).tolist(), a.cache, a.refresh, a.offline)
     cand_ids = {str(i) for i in cand["player_id"].dropna().astype(int)}
     print(f"[WD] Wikidata'da eşleşen: {sum(1 for k, r in wd.items() if k in cand_ids and r.get('qid'))} / {len(cand)}")
@@ -506,8 +726,10 @@ def main():
         qids = [r["qid"] for r in wd.values() if r.get("qid")]
         wd_teams = fetch_current_teams(qids, refresh=a.refresh_teams) if not a.offline else _load(TEAMS_CACHE, False)
     players = merge(cand, wd, a.min_sitelinks, a.min_fields, a.current_season, load_team_overrides(), wd_teams,
-                    a.tr_min_sitelinks, a.extra_min_fields)
+                    a.tr_min_sitelinks, a.extra_min_fields, a.wd_newer_than, a.wd_undated_wins,
+                    squad_map, squad_clubs)
     report(players)
+    write_team_report()
     Path(a.out).write_text(json.dumps(players, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"\n[OK] {a.out} yazıldı. Oyun klasörüne index.html'in yanına koy.")
 
