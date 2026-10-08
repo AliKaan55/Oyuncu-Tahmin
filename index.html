@@ -1,0 +1,2294 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futbolcu Düellosu | İki Kişilik Bilgi Yarışması</title>
+  <meta name="description" content="İki kişilik sıra tabanlı (hot-seat) futbolcu istatistik ve bilgi karşılaştırma yarışması." />
+  <meta property="og:title" content="Futbolcu Düellosu | İki Kişilik Bilgi Yarışması" />
+  <meta property="og:description" content="İki kişilik sıra tabanlı futbolcu istatistik ve bilgi karşılaştırma yarışması." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       TEMEL DEĞİŞKENLER VE SIFIRLAMA (Modern Koyu Futbol Teması)
+       ========================================================================== */
+    :root {
+      --bg-primary: #070a12;
+      --bg-surface: #0e1424;
+      --bg-surface-elevated: #151f38;
+      --bg-surface-glass: rgba(18, 27, 48, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: #10b981;
+      
+      --accent-pitch: #10b981;
+      --accent-pitch-glow: rgba(16, 185, 129, 0.25);
+      --accent-gold: #f59e0b;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-cyan: #06b6d4;
+      --accent-crimson: #ef4444;
+
+      --p1-color: #38bdf8;
+      --p1-bg: rgba(56, 189, 248, 0.12);
+      --p1-border: rgba(56, 189, 248, 0.35);
+
+      --p2-color: #f97316;
+      --p2-bg: rgba(249, 115, 22, 0.12);
+      --p2-border: rgba(249, 115, 22, 0.35);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --font-display: 'Cabinet Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.12), transparent 70%),
+        radial-gradient(ellipse 60% 40% at 50% 120%, rgba(56, 189, 248, 0.08), transparent 70%),
+        linear-gradient(180deg, #070a12 0%, #0a0f1d 100%);
+      background-attachment: fixed;
+    }
+
+    /* Tabular rakamlar */
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Ana Konteyner */
+    .app-container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 1rem 1.25rem 3rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Üst Bar */
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-ball {
+      display: inline-block;
+      font-size: 1.2rem;
+      animation: spin-slow 20s linear infinite;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 1rem;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Canlı Skor & Tur Paneli */
+    .hud-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hud-player {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 0;
+    }
+
+    .hud-player-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .hud-player-p1 .hud-player-dot {
+      background-color: var(--p1-color);
+      box-shadow: 0 0 10px var(--p1-color);
+    }
+
+    .hud-player-p2 .hud-player-dot {
+      background-color: var(--p2-color);
+      box-shadow: 0 0 10px var(--p2-color);
+    }
+
+    .hud-player-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 140px;
+    }
+
+    .hud-player-score {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      padding: 0.15rem 0.6rem;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .hud-round-pill {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    /* Kartlar ve Görsel Kapsayıcılar */
+    .card-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    /* Hedef Oyuncu Vitrini */
+    .target-showcase {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.12), transparent 70%), var(--bg-surface-elevated);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .target-kicker {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-pitch);
+      margin-bottom: 0.75rem;
+      display: inline-block;
+    }
+
+    .target-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .target-question-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      padding: 0.6rem 1.5rem;
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 600;
+      max-width: 90%;
+    }
+
+    .target-question-icon {
+      font-size: 1.25rem;
+    }
+
+    /* 6 Soru Türü Etiketleri */
+    .question-badges-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.75rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .q-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 0.4rem 0.75rem;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .q-badge.active {
+      color: #fff;
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--accent-pitch);
+      box-shadow: 0 0 15px var(--accent-pitch-glow);
+    }
+
+    /* Sıra Bildirimi */
+    .turn-status-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .turn-p1 {
+      background: var(--p1-bg);
+      border: 1px solid var(--p1-border);
+      color: var(--p1-color);
+    }
+
+    .turn-p2 {
+      background: var(--p2-bg);
+      border: 1px solid var(--p2-border);
+      color: var(--p2-color);
+    }
+
+    /* Tahmin Formu ve Otomatik Tamamlama */
+    .guess-form {
+      position: relative;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      font-weight: 600;
+      padding: 0.95rem 1.25rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-pitch);
+      background: rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 0 3px var(--accent-pitch-glow);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+
+    /* Otomatik Tamamlama Açılır Kutusu */
+    .autocomplete-list {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+      list-style: none;
+    }
+
+    .autocomplete-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .autocomplete-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .autocomplete-item {
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background 0.12s ease;
+    }
+
+    .autocomplete-item:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-item:hover,
+    .autocomplete-item.selected {
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .autocomplete-item-name {
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+
+    .autocomplete-item-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Butonlar */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 0.9rem 1.75rem;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 100%;
+      min-height: 48px;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #fff;
+      box-shadow: 0 4px 15px var(--accent-pitch-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-p1 {
+      background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+      color: #070a12;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.25);
+    }
+
+    .btn-p2 {
+      background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%);
+      color: #070a12;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.25);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    /* Hata ve Uyarı Kutusu */
+    .alert-box {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 0.85rem 1.1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    /* Gizlilik / Ara Ekran (Hot-seat Handoff) */
+    .handoff-panel {
+      text-align: center;
+      padding: 3.5rem 1.5rem;
+    }
+
+    .handoff-icon {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      animation: pulse-scale 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-scale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .handoff-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .handoff-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      line-height: 1.6;
+    }
+
+    /* Sonuç Ekranı Karşılaştırma Kartları */
+    .results-comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 2rem 0;
+    }
+
+    @media (max-width: 680px) {
+      .results-comparison {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .player-result-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .player-result-card.winner {
+      border-color: var(--accent-pitch);
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15), var(--bg-surface-elevated) 70%);
+      box-shadow: 0 0 25px var(--accent-pitch-glow);
+    }
+
+    .result-badge-winner {
+      position: absolute;
+      top: -12px;
+      right: 14px;
+      background: var(--accent-pitch);
+      color: #070a12;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .player-result-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    .player-result-card.p1-card .player-result-header { color: var(--p1-color); }
+    .player-result-card.p2-card .player-result-header { color: var(--p2-color); }
+
+    .result-guess-name {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .result-guess-val {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .result-diff-box {
+      margin-top: auto;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem;
+      text-align: center;
+    }
+
+    .result-diff-label {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+
+    .result-diff-value {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .round-outcome-banner {
+      text-align: center;
+      padding: 1.25rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Final Ekranı */
+    .gameover-podium {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .gameover-trophy {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      animation: float-trophy 3s ease-in-out infinite;
+    }
+
+    @keyframes float-trophy {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .gameover-winner-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--accent-gold);
+    }
+
+    .gameover-score-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1rem 2rem;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .gameover-score-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .gameover-score-num {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 900;
+    }
+
+    /* Tur Geçmişi Listesi */
+    .history-section {
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .history-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 0.35rem;
+    }
+
+    .history-item {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* Başlangıç Ayar Formu */
+    .setup-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .setup-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .setup-input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 0.85rem 1.1rem;
+      outline: none;
+      transition: border 0.15s ease;
+    }
+
+    .setup-input:focus {
+      border-color: var(--accent-pitch);
+    }
+
+    .round-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .round-option-btn {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      padding: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .round-option-btn:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .round-option-btn.selected {
+      background: var(--accent-pitch);
+      border-color: var(--accent-pitch);
+      color: #070a12;
+      box-shadow: 0 4px 15px var(--accent-pitch-glow);
+    }
+
+    /* Nasıl Oynanır Kartı */
+    .rules-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-top: 1.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .rules-card h4 {
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .rules-card ul {
+      padding-left: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    /* Modal / Toast Bildirimi */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.85rem 1.4rem;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+      font-size: 0.9rem;
+      font-weight: 600;
+      animation: toast-in 0.25s ease;
+    }
+
+    @keyframes toast-in {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       3 SÜTUNLU OYUN TAHTASI: Oyuncu 1 | Hedef Futbolcu | Oyuncu 2
+       ========================================================================== */
+    .app-container { max-width: 1280px; }
+
+    .board {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .board-col {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem;
+      min-height: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      position: relative;
+      box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.6);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+    }
+
+    /* Üstteki oyuncu isim kutusu */
+    .side-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 1rem 1.15rem;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-subtle);
+    }
+    .side-p1 .side-head { background: var(--p1-bg); border-color: var(--p1-border); color: var(--p1-color); }
+    .side-p2 .side-head { background: var(--p2-bg); border-color: var(--p2-border); color: var(--p2-color); }
+
+    .side-name {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .side-score {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 900;
+      min-width: 2.4rem;
+      text-align: center;
+      padding: 0.1rem 0.6rem;
+      border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+    }
+
+    /* Sırası gelen panel parlar, diğeri hafif solar */
+    .side-panel:not(.is-active) { opacity: 0.88; }
+    .side-p1.is-active { border-color: var(--p1-color); box-shadow: 0 0 0 3px var(--p1-bg), 0 20px 40px -18px rgba(0,0,0,.6); opacity: 1; }
+    .side-p2.is-active { border-color: var(--p2-color); box-shadow: 0 0 0 3px var(--p2-bg), 0 20px 40px -18px rgba(0,0,0,.6); opacity: 1; }
+    .side-panel.is-winner { border-color: var(--accent-pitch); box-shadow: 0 0 28px var(--accent-pitch-glow); opacity: 1; }
+
+    /* "Değer" + altı çizgili alan */
+    .value-block { padding: 0 0.35rem; }
+    .value-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+    .value-line {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+      font-weight: 900;
+      color: #fff;
+      min-height: 2.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.35);
+      word-break: break-word;
+    }
+    .side-p1 .value-line { border-bottom-color: var(--p1-color); }
+    .side-p2 .value-line { border-bottom-color: var(--p2-color); }
+    .center-value .value-line { border-bottom-color: var(--accent-pitch); color: var(--accent-pitch); }
+
+    .panel-hint { color: var(--text-muted); font-size: 0.92rem; line-height: 1.5; }
+    .panel-hint strong { color: #fff; }
+
+    .panel-status {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 0.4rem;
+      color: var(--text-muted);
+      padding: 1.5rem 0.5rem;
+    }
+    .panel-status span { font-size: 2.4rem; }
+    .panel-status strong { color: #fff; font-size: 1.05rem; }
+    .panel-status small { font-size: 0.82rem; }
+    .panel-status.locked strong { color: var(--accent-pitch); }
+
+    .guess-who { text-align: center; padding: 0.25rem 0; }
+    .guess-who-name { font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: #fff; }
+    .guess-who-meta { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .side-panel .result-diff-box { margin-top: auto; }
+
+    /* Orta sütun: hedef futbolcu */
+    .board-center {
+      text-align: center;
+      align-items: center;
+      background: radial-gradient(circle at 50% 22%, rgba(16, 185, 129, 0.14), transparent 65%), var(--bg-surface-elevated);
+      border-color: rgba(16, 185, 129, 0.35);
+      justify-content: flex-start;
+      padding-top: 2rem;
+    }
+    .board-center .target-name { margin-bottom: 0.25rem; font-size: clamp(1.8rem, 3.2vw, 2.9rem); }
+    .board-center .target-question-box { max-width: 100%; }
+    .board-center .question-badges-grid { margin-top: 1rem; padding-top: 1.1rem; width: 100%; }
+    .board-center .value-block { width: 100%; margin-top: 0.5rem; text-align: left; }
+    .board-center .round-outcome-banner { width: 100%; margin-bottom: 0; font-size: 1rem; }
+    .board-center .btn { margin-top: auto; }
+
+    /* Mobil / dar ekran: hedef üstte, sonra Oyuncu 1, sonra Oyuncu 2 */
+    @media (max-width: 900px) {
+      .board { grid-template-columns: 1fr; }
+      .board-center { order: -1; }
+      .board-col { min-height: 0; }
+    }
+
+    /* ==========================================================================
+       ÖZELLİK KUTULARI (her oyuncu panelinde tur başına bir kutu)
+       ========================================================================== */
+    .board-col { min-height: 0; }
+    .q-box-list { display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .q-box {
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: rgba(0, 0, 0, 0.22);
+      padding: 0.75rem 0.9rem 0.85rem;
+      transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+    .q-box-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.55rem;
+    }
+    .q-box-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: #fff;
+    }
+    .q-box-icon { font-size: 1.05rem; }
+    .q-box-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+
+    .q-future { opacity: 0.45; }
+    .q-waiting { opacity: 0.8; }
+    .q-placeholder {
+      display: flex; flex-direction: column; gap: 0.15rem;
+      color: var(--text-muted); font-size: 0.88rem;
+      padding: 0.35rem 0;
+    }
+    .q-placeholder strong { color: #e2e8f0; font-weight: 700; }
+    .q-placeholder small { color: var(--text-dim); font-size: 0.78rem; }
+    .q-locked { border-color: rgba(16, 185, 129, 0.45); }
+    .q-locked .q-placeholder strong { color: var(--accent-pitch); }
+
+    .side-p1 .q-active { border-color: var(--p1-color); background: var(--p1-bg); }
+    .side-p2 .q-active { border-color: var(--p2-color); background: var(--p2-bg); }
+    .side-p1 .q-active .q-box-tag { color: var(--p1-color); }
+    .side-p2 .q-active .q-box-tag { color: var(--p2-color); }
+    .q-active .btn { min-height: 44px; padding: 0.7rem 1rem; font-size: 0.95rem; }
+    .q-active .search-input { font-size: 0.95rem; padding: 0.8rem 1rem; }
+    .q-active .input-group { margin-bottom: 0.6rem; }
+
+    .q-won { border-color: var(--accent-pitch); background: rgba(16, 185, 129, 0.1); }
+    .q-won .q-box-tag { color: var(--accent-pitch); }
+    .q-lost .q-box-tag { color: var(--text-dim); }
+
+    .q-guess-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: #fff; }
+    .q-guess-meta { font-size: 0.76rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .q-value-row { display: flex; align-items: baseline; gap: 0.6rem; margin-top: 0.55rem; }
+    .q-value-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    .q-value-line {
+      flex: 1;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #fff;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+      padding-bottom: 0.15rem;
+    }
+    .side-p1 .q-value-line { border-bottom-color: var(--p1-color); }
+    .side-p2 .q-value-line { border-bottom-color: var(--p2-color); }
+    .q-won .q-value-line { border-bottom-color: var(--accent-pitch); }
+    .q-diff { margin-top: 0.4rem; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+
+    /* Orta panel */
+    .round-pill {
+      font-size: 0.78rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--text-muted); background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-subtle); border-radius: 9999px;
+      padding: 0.3rem 0.9rem; margin-bottom: 0.9rem;
+    }
+    .center-props { width: 100%; display: flex; flex-direction: column; gap: 0.4rem; margin-top: 1.1rem; }
+    .prop-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;
+      padding: 0.55rem 0.85rem; border-radius: var(--radius-sm);
+      background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-subtle);
+      font-size: 0.86rem; color: var(--text-muted); text-align: left;
+    }
+    .prop-row.current { border-color: var(--accent-pitch); color: #fff; box-shadow: 0 0 14px var(--accent-pitch-glow); }
+    .prop-row.done { color: #e2e8f0; }
+    .prop-val { font-family: var(--font-display); font-weight: 900; color: var(--text-dim); white-space: nowrap; }
+    .prop-row.done .prop-val { color: var(--accent-pitch); }
+    .board-center .value-block { margin-top: 1rem; }
+    .board-center .btn { margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Üst Başlık (Header) -->
+    <header class="top-header">
+      <div class="brand-title">
+        <span class="brand-ball">⚽</span> Futbolcu Düellosu
+      </div>
+      <div class="header-actions">
+        <button id="soundToggleBtn" class="btn-icon" title="Ses Aç/Kapat" aria-label="Ses Aç/Kapat">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- Canlı HUD (Oyun esnasında görünür) -->
+    <div id="hudBar" class="hud-bar" style="display: none;">
+      <div class="hud-player hud-player-p1">
+        <div class="hud-player-dot"></div>
+        <div class="hud-player-name" id="hudP1Name">Oyuncu 1</div>
+        <div class="hud-player-score tabular-nums" id="hudP1Score">0</div>
+      </div>
+      <div class="hud-round-pill tabular-nums" id="hudRoundBadge">Tur 1 / 5</div>
+      <div class="hud-player hud-player-p2">
+        <div class="hud-player-score tabular-nums" id="hudP2Score">0</div>
+        <div class="hud-player-name" id="hudP2Name">Oyuncu 2</div>
+        <div class="hud-player-dot"></div>
+      </div>
+    </div>
+
+    <!-- Dinamik Oyun Ekranları Kapsayıcısı -->
+    <main id="appRoot"></main>
+  </div>
+
+  <!-- Toast Bildirim Yuvası -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ==========================================================================
+       OYUN MOTORU VE MANTIĞI (Tek Başına Çalışan Saf JavaScript)
+       ========================================================================== -->
+  <script type="module">
+    /**
+     * ========================================================================
+     * 1. BÖLÜM: ÖRNEK VERİ KATMANI (SAMPLE_PLAYERS)
+     * ========================================================================
+     * Eğer 'players.json' dosyası bulunamazsa veya ağ hatası olursa bu
+     * 12 oyunculuk yaklaşık TEST verisi devreye girer.
+     * Son Heung-min'in doğum yeri null bırakılarak null kontrolleri test edilebilir.
+     */
+    const SAMPLE_PLAYERS = [
+      { id: "S1",  name: "Lionel Messi",       country: "Argentina",   birthPlace: { name: "Rosario",   lat: -32.95, lon: -60.65 }, birthYear: 1987, heightCm: 170, team: "Inter Miami",     intlCaps: 190, intlGoals: 112, peakMarketValueM: 180 },
+      { id: "S2",  name: "Cristiano Ronaldo",  country: "Portugal",    birthPlace: { name: "Funchal",   lat: 32.65,  lon: -16.91 }, birthYear: 1985, heightCm: 187, team: "Al-Nassr",        intlCaps: 215, intlGoals: 135, peakMarketValueM: 120 },
+      { id: "S3",  name: "Kylian Mbappé",      country: "France",      birthPlace: { name: "Paris",     lat: 48.857, lon: 2.352 },  birthYear: 1998, heightCm: 178, team: "Real Madrid",     intlCaps: 90,  intlGoals: 50,  peakMarketValueM: 200 },
+      { id: "S4",  name: "Erling Haaland",     country: "Norway",      birthPlace: { name: "Leeds",     lat: 53.801, lon: -1.549 }, birthYear: 2000, heightCm: 194, team: "Manchester City", intlCaps: 40,  intlGoals: 36,  peakMarketValueM: 200 },
+      { id: "S5",  name: "Luka Modrić",        country: "Croatia",     birthPlace: { name: "Zadar",     lat: 44.119, lon: 15.231 }, birthYear: 1985, heightCm: 172, team: "AC Milan",        intlCaps: 190, intlGoals: 27,  peakMarketValueM: 80 },
+      { id: "S6",  name: "Arda Güler",         country: "Turkey",      birthPlace: { name: "Ankara",    lat: 39.933, lon: 32.86 },  birthYear: 2005, heightCm: 176, team: "Real Madrid",     intlCaps: 30,  intlGoals: 6,   peakMarketValueM: 70 },
+      { id: "S7",  name: "Hakan Çalhanoğlu",   country: "Turkey",      birthPlace: { name: "Mannheim",  lat: 49.488, lon: 8.466 },  birthYear: 1994, heightCm: 178, team: "Inter",           intlCaps: 105, intlGoals: 20,  peakMarketValueM: 50 },
+      { id: "S8",  name: "Mohamed Salah",      country: "Egypt",       birthPlace: { name: "Nagrig",    lat: 30.94,  lon: 30.81 },  birthYear: 1992, heightCm: 175, team: "Liverpool",       intlCaps: 110, intlGoals: 60,  peakMarketValueM: 150 },
+      { id: "S9",  name: "Kevin De Bruyne",    country: "Belgium",     birthPlace: { name: "Drongen",   lat: 51.05,  lon: 3.667 },  birthYear: 1991, heightCm: 181, team: "Napoli",          intlCaps: 110, intlGoals: 33,  peakMarketValueM: 150 },
+      { id: "S10", name: "Harry Kane",         country: "England",     birthPlace: { name: "London",    lat: 51.507, lon: -0.128 }, birthYear: 1993, heightCm: 188, team: "Bayern München",  intlCaps: 110, intlGoals: 75,  peakMarketValueM: 150 },
+      { id: "S11", name: "Manuel Neuer",       country: "Germany",     birthPlace: { name: "Gelsenkirchen", lat: 51.518, lon: 7.086 }, birthYear: 1986, heightCm: 193, team: "Bayern München", intlCaps: 124, intlGoals: 0,   peakMarketValueM: 45 },
+      { id: "S12", name: "Son Heung-min",      country: "South Korea", birthPlace: null,                                              birthYear: 1992, heightCm: 183, team: "LAFC",            intlCaps: 135, intlGoals: 54,  peakMarketValueM: 100 }
+    ];
+    // NOT: Yukarıdaki değerler yaklaşık TEST verisidir. Gerçek veri players.json'dan gelir.
+    let usingSampleData = false;
+
+    /**
+     * loadPlayers()
+     * TEK OYUNCU OKUMA FONKSİYONU:
+     * Önce 'players.json' dosyasını okumayı dener; bulunamazsa SAMPLE_PLAYERS dizisine düşer.
+     * Başka hiçbir yerde oyuncu verisi okunmaz.
+     */
+    async function loadPlayers() {
+      try {
+        const response = await fetch('players.json');
+        if (!response.ok) {
+          throw new Error(`HTTP Hata: ${response.status}`);
+        }
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data;
+        }
+        throw new Error('Geçersiz oyuncu verisi');
+      } catch (err) {
+        console.warn('players.json okunamadı veya bulunamadı, yerleşik SAMPLE_PLAYERS kullanılıyor:', err.message);
+        usingSampleData = true;
+        return SAMPLE_PLAYERS;
+      }
+    }
+
+    /**
+     * ========================================================================
+     * 2. BÖLÜM: SORU TANIMLARI VE SAF HESAPLAMA FONKSİYONLARI
+     * ========================================================================
+     */
+    const QUESTION_TYPES = [
+      { key: 'intlGoals',        title: 'Milli takımda kaç gol attı?',                 icon: '⚽', unit: 'gol',  shortName: 'Milli Gol' },
+      { key: 'intlCaps',         title: 'Milli takımda kaç maça çıktı?',               icon: '🏃', unit: 'maç',  shortName: 'Milli Maç' },
+      { key: 'heightCm',         title: 'Boyu kaç cm?',                                icon: '📏', unit: 'cm',   shortName: 'Boy (cm)' },
+      { key: 'birthYear',        title: 'Hangi yıl doğdu?',                            icon: '🎂', unit: 'yılı', shortName: 'Doğum Yılı' },
+      { key: 'peakMarketValueM', title: 'Kariyer zirvesindeki piyasa değeri kaç milyon €?', icon: '💶', unit: 'M€', shortName: 'Zirve Değer (M€)' },
+      { key: 'birthPlace',       title: 'Nerede doğdu?',                               icon: '📍', unit: 'km mesafe', shortName: 'Doğum Yeri' }
+    ];
+
+    // Bir oyunda sorulacak özellik (tur) sayısı: tek hedef futbolcunun kaç özelliği sorulsun?
+    const QUESTIONS_PER_GAME = 5;
+
+    // Oyuncu panellerindeki kutuların başlıkları
+    const BOX_TITLES = {
+      intlGoals: 'Milli takımda attığı gol',
+      intlCaps: 'Milli takımda maç sayısı',
+      heightCm: 'Boyu',
+      birthYear: 'Doğum yılı',
+      peakMarketValueM: 'Zirve piyasa değeri',
+      birthPlace: 'Doğum yeri'
+    };
+
+    function unitOf(qKey) {
+      const q = QUESTION_TYPES.find(x => x.key === qKey);
+      return q ? q.unit : '';
+    }
+
+    /**
+     * hasValue(): Oyuncuda ilgili soru alanı dolu mu? (birthPlace için koordinat da gerekir)
+     */
+    function hasValue(player, key) {
+      if (key === 'birthPlace') {
+        const bp = player.birthPlace;
+        return !!bp && typeof bp.lat === 'number' && typeof bp.lon === 'number';
+      }
+      return player[key] !== null && player[key] !== undefined;
+    }
+
+    /**
+     * Haversine Formülü: İki coğrafi koordinat arasındaki küresel mesafeyi km cinsinden hesaplar.
+     */
+    function calculateHaversineDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Dünya yarıçapı (km)
+      const toRad = Math.PI / 180;
+      const dLat = (lat2 - lat1) * toRad;
+      const dLon = (lon2 - lon1) * toRad;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * toRad) * Math.cos(lat2 * toRad) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return Math.round(R * c);
+    }
+
+    /**
+     * calculateDifference(): İki oyuncunun ilgili soru özelliğindeki farkını hesaplar.
+     * Sayısal alanlarda mutlak fark, doğum yerinde Haversine km mesafesi döner.
+     */
+    function calculateDifference(targetPlayer, guessPlayer, questionKey) {
+      if (questionKey === 'birthPlace') {
+        const tLoc = targetPlayer.birthPlace;
+        const gLoc = guessPlayer.birthPlace;
+        if (!tLoc || !gLoc) return Infinity;
+        return calculateHaversineDistanceKm(tLoc.lat, tLoc.lon, gLoc.lat, gLoc.lon);
+      }
+      const tVal = targetPlayer[questionKey];
+      const gVal = guessPlayer[questionKey];
+      if (tVal === null || tVal === undefined || gVal === null || gVal === undefined) {
+        return Infinity;
+      }
+      return Math.abs(gVal - tVal);
+    }
+
+    /**
+     * normalizeText(): Türkçe karakterleri ve aksanları duyarsızlaştırır.
+     * Örneğin 'Mbappe' yazınca 'Mbappé' veya 'hakan calhanoglu' yazınca 'Hakan Çalhanoğlu' bulunur.
+     */
+    function normalizeText(text) {
+      if (!text) return '';
+      return text
+        .toString()
+        .toLowerCase()
+        .replace(/ğ/g, 'g')
+        .replace(/ü/g, 'u')
+        .replace(/ş/g, 's')
+        .replace(/ı/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ç/g, 'c')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+    }
+
+
+    /**
+     * ========================================================================
+     * ŞEHİR VERİTABANI (Doğum Yeri turu için)
+     * Doğum yeri turunda oyuncu değil ŞEHİR tahmin edilir. Şehir listesi iki kaynaktan birleşir:
+     *  1) players.json içindeki tüm oyuncuların doğum yerleri
+     *  2) Aşağıdaki EXTRA_CITIES: Türkiye'nin 81 ili + dünyanın büyük şehirleri (Türkçe takma adlarıyla)
+     * Format: [ad, enlem, boylam, [takma adlar]]
+     * ========================================================================
+     */
+    const EXTRA_CITIES = [
+      // --- Türkiye (81 il) ---
+      ['Adana',37.00,35.32],['Adıyaman',37.76,38.28],['Afyonkarahisar',38.76,30.54,['Afyon']],['Ağrı',39.72,43.05],
+      ['Aksaray',38.37,34.03],['Amasya',40.65,35.83],['Ankara',39.93,32.86],['Antalya',36.90,30.70],['Ardahan',41.11,42.70],
+      ['Artvin',41.18,41.82],['Aydın',37.85,27.84],['Balıkesir',39.65,27.89],['Bartın',41.64,32.34],['Batman',37.88,41.13],
+      ['Bayburt',40.26,40.23],['Bilecik',40.14,29.98],['Bingöl',38.88,40.50],['Bitlis',38.40,42.11],['Bolu',40.74,31.61],
+      ['Burdur',37.72,30.29],['Bursa',40.19,29.06],['Çanakkale',40.15,26.41],['Çankırı',40.60,33.62],['Çorum',40.55,34.95],
+      ['Denizli',37.78,29.09],['Diyarbakır',37.91,40.24],['Düzce',40.84,31.16],['Edirne',41.68,26.56],['Elazığ',38.67,39.22],
+      ['Erzincan',39.75,39.49],['Erzurum',39.90,41.27],['Eskişehir',39.78,30.52],['Gaziantep',37.07,37.38,['Antep']],
+      ['Giresun',40.91,38.39],['Gümüşhane',40.46,39.48],['Hakkari',37.58,43.74],['Hatay',36.20,36.16,['Antakya']],
+      ['Iğdır',39.92,44.04],['Isparta',37.76,30.55],['İstanbul',41.01,28.98],['İzmir',38.42,27.14],
+      ['Kahramanmaraş',37.58,36.94,['Maraş']],['Karabük',41.20,32.63],['Karaman',37.18,33.23],['Kars',40.60,43.10],
+      ['Kastamonu',41.39,33.78],['Kayseri',38.73,35.49],['Kilis',36.72,37.12],['Kırıkkale',39.85,33.51],
+      ['Kırklareli',41.74,27.23],['Kırşehir',39.15,34.17],['Kocaeli',40.77,29.92,['İzmit']],['Konya',37.87,32.48],
+      ['Kütahya',39.42,29.98],['Malatya',38.35,38.31],['Manisa',38.61,27.43],['Mardin',37.31,40.74],['Mersin',36.80,34.64],
+      ['Muğla',37.22,28.36],['Muş',38.74,41.49],['Nevşehir',38.62,34.71],['Niğde',37.97,34.68],['Ordu',40.98,37.88],
+      ['Osmaniye',37.07,36.25],['Rize',41.02,40.52],['Sakarya',40.78,30.40,['Adapazarı']],['Samsun',41.29,36.33],
+      ['Şanlıurfa',37.16,38.79,['Urfa']],['Siirt',37.93,41.94],['Sinop',42.03,35.15],['Sivas',39.75,37.02],
+      ['Şırnak',37.52,42.46],['Tekirdağ',40.98,27.51],['Tokat',40.31,36.55],['Trabzon',41.00,39.72],['Tunceli',39.11,39.55],
+      ['Uşak',38.68,29.41],['Van',38.49,43.38],['Yalova',40.65,29.27],['Yozgat',39.82,34.81],['Zonguldak',41.46,31.80],
+      ['Bodrum',37.04,27.43],['Alanya',36.54,32.00],['Fethiye',36.62,29.12],['Marmaris',36.85,28.27],
+      // --- Avrupa ---
+      ['London',51.51,-0.13,['Londra']],['Paris',48.86,2.35],['Madrid',40.42,-3.70],['Barcelona',41.39,2.17],
+      ['Rome',41.90,12.50,['Roma']],['Milan',45.46,9.19,['Milano']],['Naples',40.85,14.27,['Napoli']],['Turin',45.07,7.69,['Torino']],
+      ['Florence',43.77,11.26,['Floransa','Firenze']],['Venice',45.44,12.32,['Venedik','Venezia']],['Berlin',52.52,13.40],
+      ['Munich',48.14,11.58,['Münih','Munchen']],['Hamburg',53.55,9.99],['Frankfurt',50.11,8.68],['Cologne',50.94,6.96,['Köln','Koln']],
+      ['Dortmund',51.51,7.47],['Amsterdam',52.37,4.90],['Rotterdam',51.92,4.48],['Brussels',50.85,4.35,['Brüksel']],
+      ['Lisbon',38.72,-9.14,['Lizbon','Lisboa']],['Porto',41.15,-8.61],['Vienna',48.21,16.37,['Viyana','Wien']],
+      ['Zurich',47.38,8.54,['Zürih']],['Geneva',46.20,6.14,['Cenevre']],['Prague',50.08,14.44,['Prag']],
+      ['Warsaw',52.23,21.01,['Varşova']],['Budapest',47.50,19.04,['Budapeşte']],['Athens',37.98,23.73,['Atina']],
+      ['Moscow',55.76,37.62,['Moskova']],['Saint Petersburg',59.93,30.34,['St Petersburg','Petersburg']],
+      ['Kyiv',50.45,30.52,['Kiev']],['Copenhagen',55.68,12.57,['Kopenhag']],['Stockholm',59.33,18.07,['Stokholm']],
+      ['Oslo',59.91,10.75],['Helsinki',60.17,24.94],['Dublin',53.35,-6.26],['Edinburgh',55.95,-3.19],['Glasgow',55.86,-4.25],
+      ['Manchester',53.48,-2.24],['Liverpool',53.41,-2.99],['Birmingham',52.49,-1.89],['Belgrade',44.79,20.45,['Belgrad']],
+      ['Zagreb',45.81,15.98],['Sarajevo',43.86,18.41,['Saraybosna']],['Skopje',42.00,21.43,['Üsküp']],['Sofia',42.70,23.32,['Sofya']],
+      ['Bucharest',44.43,26.10,['Bükreş']],['Tirana',41.33,19.82],['Marseille',43.30,5.37,['Marsilya']],['Lyon',45.76,4.84],
+      ['Seville',37.39,-5.98,['Sevilla']],['Valencia',39.47,-0.38],['Bilbao',43.26,-2.93],['Baku',40.41,49.87,['Bakü']],
+      ['Tbilisi',41.72,44.79,['Tiflis']],['Nicosia',35.19,33.38,['Lefkoşa']],
+      // --- Asya / Orta Doğu ---
+      ['Tokyo',35.68,139.69],['Seoul',37.57,126.98,['Seul']],['Beijing',39.90,116.41,['Pekin']],['Shanghai',31.23,121.47,['Şanghay']],
+      ['Hong Kong',22.32,114.17],['Singapore',1.35,103.82,['Singapur']],['Bangkok',13.76,100.50],['Jakarta',-6.21,106.85,['Cakarta']],
+      ['Mumbai',19.08,72.88],['New Delhi',28.61,77.21,['Delhi','Yeni Delhi']],['Dubai',25.20,55.27],['Doha',25.29,51.53],
+      ['Riyadh',24.71,46.68,['Riyad']],['Jeddah',21.54,39.17,['Cidde']],['Tehran',35.69,51.39,['Tahran']],['Baghdad',33.31,44.37,['Bağdat']],
+      ['Damascus',33.51,36.29,['Şam']],['Beirut',33.89,35.50,['Beyrut']],['Jerusalem',31.77,35.21,['Kudüs']],['Tel Aviv',32.09,34.78],
+      ['Amman',31.95,35.93,['Ammán']],['Tashkent',41.30,69.24,['Taşkent']],['Almaty',43.24,76.89],['Karachi',24.86,67.01,['Karaçi']],
+      // --- Afrika ---
+      ['Cairo',30.04,31.24,['Kahire']],['Casablanca',33.57,-7.59],['Algiers',36.75,3.06,['Cezayir']],['Tunis',36.81,10.18],
+      ['Lagos',6.52,3.38],['Accra',5.60,-0.19],['Dakar',14.72,-17.47],['Abidjan',5.36,-4.01],['Kinshasa',-4.44,15.27],
+      ['Johannesburg',-26.20,28.05],['Cape Town',-33.92,18.42,['Cape Town','Kapstad']],['Nairobi',-1.29,36.82],
+      ['Addis Ababa',9.03,38.74,['Addis Ababa']],['Yaoundé',3.87,11.52,['Yaounde']],
+      // --- Amerika ---
+      ['New York',40.71,-74.01,['NYC']],['Los Angeles',34.05,-118.24],['Chicago',41.88,-87.63],['Miami',25.76,-80.19],
+      ['Boston',42.36,-71.06],['Washington',38.91,-77.04],['San Francisco',37.77,-122.42],['Toronto',43.65,-79.38],
+      ['Montreal',45.50,-73.57],['Mexico City',19.43,-99.13,['Meksiko']],['Buenos Aires',-34.60,-58.38],['Rosario',-32.95,-60.64],
+      ['São Paulo',-23.55,-46.63,['Sao Paulo']],['Rio de Janeiro',-22.91,-43.17,['Rio']],['Montevideo',-34.90,-56.16],
+      ['Bogotá',4.71,-74.07,['Bogota']],['Lima',-12.05,-77.04],['Santiago',-33.45,-70.67],['Caracas',10.48,-66.90],
+      // --- Okyanusya ---
+      ['Sydney',-33.87,151.21],['Melbourne',-37.81,144.96],['Auckland',-36.85,174.76]
+    ];
+
+    // Çalışma anında oluşturulan şehir listesi: { name, lat, lon, keys: [normalize edilmiş adlar] }
+    let CITY_DB = [];
+
+    function buildCityDb(players) {
+      const byKey = new Map();
+      function add(name, lat, lon, aliases) {
+        if (typeof lat !== 'number' || typeof lon !== 'number') return;
+        const key = normalizeText(name);
+        if (!key) return;
+        let entry = byKey.get(key);
+        if (!entry) {
+          entry = { name, lat, lon, keys: [key] };
+          byKey.set(key, entry);
+        }
+        (aliases || []).forEach(a => {
+          const ak = normalizeText(a);
+          if (ak && !entry.keys.includes(ak)) entry.keys.push(ak);
+          if (ak && !byKey.has(ak)) byKey.set(ak, entry);
+        });
+      }
+      // Önce hazır liste (Türkçe takma adlar ve Türkiye illeri), sonra oyuncu doğum yerleri
+      EXTRA_CITIES.forEach(c => add(c[0], c[1], c[2], c[3]));
+      players.forEach(p => {
+        if (p.birthPlace) add(p.birthPlace.name, p.birthPlace.lat, p.birthPlace.lon);
+      });
+      return Array.from(new Set(byKey.values()));
+    }
+
+    /** searchCities(): Aksan duyarsız şehir araması (adın veya takma adın içinde geçen). */
+    function searchCities(query) {
+      const q = normalizeText(query);
+      if (!q) return [];
+      return CITY_DB
+        .filter(c => c.keys.some(k => k.includes(q)))
+        .sort((a, b) => {
+          const as = a.keys.some(k => k.startsWith(q)) ? 0 : 1;
+          const bs = b.keys.some(k => k.startsWith(q)) ? 0 : 1;
+          return as - bs || a.name.localeCompare(b.name);
+        })
+        .slice(0, 8);
+    }
+
+    /** findCityExact(): Yazılan metin bir şehir adı/takma adıyla tam eşleşiyorsa o şehri döndürür. */
+    function findCityExact(text) {
+      const q = normalizeText(text);
+      return CITY_DB.find(c => c.keys.includes(q)) || null;
+    }
+
+    /**
+     * makeCityGuess(): Seçilen şehri, calculateDifference() ile uyumlu bir "tahmin" nesnesine çevirir.
+     * (birthPlace alanı olduğu için mesafe aynı Haversine fonksiyonuyla hesaplanır.)
+     */
+    function makeCityGuess(city) {
+      return {
+        id: 'city:' + normalizeText(city.name),
+        name: city.name,
+        isCityGuess: true,
+        birthPlace: { name: city.name, lat: city.lat, lon: city.lon }
+      };
+    }
+
+    /**
+     * ========================================================================
+     * 3. BÖLÜM: SES EFEKTLERİ MOTORU (Web Audio API Synthesizer)
+     * ========================================================================
+     */
+    class SoundFX {
+      constructor() {
+        this.enabled = true;
+        this.ctx = null;
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) {
+            this.ctx = new AudioContextClass();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type = 'sine', duration = 0.15, gainVal = 0.1) {
+        if (!this.enabled) return;
+        try {
+          this.initContext();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch {
+          // Ses desteklenmiyorsa sessiz kal
+        }
+      }
+
+      click() {
+        this.playTone(520, 'sine', 0.08, 0.08);
+      }
+
+      confirm() {
+        this.playTone(600, 'sine', 0.1, 0.1);
+        setTimeout(() => this.playTone(840, 'sine', 0.18, 0.12), 100);
+      }
+
+      success() {
+        const notes = [523.25, 659.25, 783.99, 1046.5]; // C E G C
+        notes.forEach((freq, idx) => {
+          setTimeout(() => this.playTone(freq, 'triangle', 0.25, 0.15), idx * 90);
+        });
+      }
+
+      buzz() {
+        this.playTone(160, 'sawtooth', 0.2, 0.12);
+        setTimeout(() => this.playTone(130, 'sawtooth', 0.22, 0.12), 120);
+      }
+    }
+
+    const sfx = new SoundFX();
+
+    /**
+     * ========================================================================
+     * 4. BÖLÜM: OYUN DURUMU (Single State Object)
+     * ========================================================================
+     */
+    const state = {
+      allPlayers: [],
+      availableTargetPlayers: [],
+      usedTargetIds: new Set(),
+
+      p1Name: 'Oyuncu 1',
+      p2Name: 'Oyuncu 2',
+      totalRounds: 5,
+      currentRound: 1,
+
+      p1Score: 0,
+      p2Score: 0,
+
+      // Aktif Tur Verileri
+      targetPlayer: null,
+      question: null,
+      p1GuessPlayer: null,
+      p2GuessPlayer: null,
+
+      // Bu oyunun soruları ve tur kayıtları (tek hedef futbolcu, çok özellik)
+      questions: [],
+      rounds: [],
+
+      // Tur Geçmişi (rounds ile aynı dizi, final ekranı kullanır)
+      roundHistory: [],
+
+      // Arayüz Görünümü: 'SETUP' | 'ROUND_P1' | 'HANDOFF' | 'ROUND_P2' | 'RESULT' | 'GAMEOVER'
+      view: 'SETUP'
+    };
+
+    /**
+     * Toast Bildirim Fonksiyonu
+     */
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.remove();
+      }, 3500);
+    }
+
+    /**
+     * ========================================================================
+     * 5. BÖLÜM: TUR VE SORU SEÇİMİ MANTIĞI
+     * ========================================================================
+     */
+    function shuffleArray(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function countAskable(player) {
+      return QUESTION_TYPES.filter(q => hasValue(player, q.key)).length;
+    }
+
+    /**
+     * startGame(): TEK bir hedef futbolcu seçer, onun 5 özelliğini (tur) belirler.
+     * Hedef oyuncunun en az QUESTIONS_PER_GAME sorulabilir alanı olmalıdır.
+     */
+    function startGame() {
+      // guessOnly: sadece tahmin listesinde çıkar, hedef futbolcu olarak seçilmez (ek Türk oyuncular)
+      const targetable = state.allPlayers.filter(p => !p.guessOnly);
+      let pool = targetable.filter(p => countAskable(p) >= QUESTIONS_PER_GAME);
+      if (pool.length === 0) {
+        // Yeterince dolu oyuncu yoksa en çok alanı dolu olanları kullan
+        const max = Math.max(...targetable.map(countAskable));
+        pool = targetable.filter(p => countAskable(p) === max);
+      }
+      const target = pool[Math.floor(Math.random() * pool.length)];
+      const questions = shuffleArray(QUESTION_TYPES.filter(q => hasValue(target, q.key))).slice(0, QUESTIONS_PER_GAME);
+
+      state.targetPlayer = target;
+      state.questions = questions;
+      state.totalRounds = questions.length;
+      state.currentRound = 1;
+      state.p1Score = 0;
+      state.p2Score = 0;
+      state.rounds = questions.map((q, i) => ({
+        roundNum: i + 1,
+        targetPlayer: target,
+        question: q,
+        p1Guess: null,
+        p2Guess: null,
+        diffP1: null,
+        diffP2: null,
+        winner: null,
+        resolved: false
+      }));
+      state.roundHistory = state.rounds;
+      beginRound();
+    }
+
+    /** beginRound(): Mevcut tur için Oyuncu 1'in tahmin sırasını başlatır. */
+    function beginRound() {
+      state.question = state.questions[state.currentRound - 1];
+      state.p1GuessPlayer = null;
+      state.p2GuessPlayer = null;
+      state.view = 'ROUND_P1';
+      render();
+    }
+
+    /**
+     * ========================================================================
+     * 6. BÖLÜM: ARAYÜZ ÇİZİMİ (Renderers)
+     * ========================================================================
+     */
+    const appRoot = document.getElementById('appRoot');
+    const hudBar = document.getElementById('hudBar');
+    const hudP1Name = document.getElementById('hudP1Name');
+    const hudP1Score = document.getElementById('hudP1Score');
+    const hudP2Name = document.getElementById('hudP2Name');
+    const hudP2Score = document.getElementById('hudP2Score');
+    const hudRoundBadge = document.getElementById('hudRoundBadge');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+
+    // Ses Aç/Kapat Butonu Dinleyicisi
+    soundToggleBtn.addEventListener('click', () => {
+      sfx.enabled = !sfx.enabled;
+      soundToggleBtn.textContent = sfx.enabled ? '🔊' : '🔇';
+      soundToggleBtn.title = sfx.enabled ? 'Sesi Kapat' : 'Sesi Aç';
+    });
+
+    function updateHud() {
+      // Skorlar artık oyuncu panellerinin başlığında gösterilir.
+      hudBar.style.display = 'none';
+    }
+
+    function render() {
+      updateHud();
+      switch (state.view) {
+        case 'SETUP':
+          renderSetupView();
+          break;
+        case 'ROUND_P1':
+          renderGuessView('p1');
+          break;
+        case 'ROUND_P2':
+          renderGuessView('p2');
+          break;
+        case 'RESULT':
+          renderResultView();
+          break;
+        case 'GAMEOVER':
+          renderGameOverView();
+          break;
+      }
+    }
+
+    /**
+     * BAŞLANGIÇ EKRANI
+     */
+    function renderSetupView() {
+      appRoot.innerHTML = `
+        <div class="card-panel">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <span style="font-size: 3rem;">⚔️</span>
+            <h2 style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; margin-top: 0.5rem; letter-spacing: -0.02em;">
+              Futbolcu Düellosuna Hoş Geldiniz!
+            </h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;">
+              İki kişilik sıra tabanlı bilgi ve tahmin yarışı.
+            </p>
+          </div>
+
+          ${usingSampleData ? '<div class="alert-box" style="animation:none;">⚠️ players.json bulunamadı, 12 oyunculuk TEST verisi kullanılıyor. Gerçek veri için siteyi bir sunucudan aç ve players.json\'u index.html\'in yanına koy.</div>' : ''}
+
+          <div class="setup-group">
+            <label class="setup-label" for="inputP1">1. Oyuncu Adı</label>
+            <input type="text" id="inputP1" class="setup-input" value="${state.p1Name}" maxlength="20" placeholder="1. Oyuncu Adı" />
+          </div>
+
+          <div class="setup-group">
+            <label class="setup-label" for="inputP2">2. Oyuncu Adı</label>
+            <input type="text" id="inputP2" class="setup-input" value="${state.p2Name}" maxlength="20" placeholder="2. Oyuncu Adı" />
+          </div>
+
+          
+          <button id="startGameBtn" class="btn btn-primary" style="margin-top: 1rem;">
+            Düelloyu Başlat ⚽
+          </button>
+
+          <div class="rules-card">
+            <h4>💡 Nasıl Oynanır?</h4>
+            <ul>
+                <li>Oyunda tek bir <strong>Hedef Futbolcu</strong> vardır. ${QUESTIONS_PER_GAME} tur boyunca bu futbolcunun ${QUESTIONS_PER_GAME} farklı özelliği sorulur (milli gol, boy, doğum yılı, piyasa değeri, doğum yeri gibi).</li>
+                <li>Her turda sırayla önce 1. Oyuncu, sonra 2. Oyuncu, o özellikte hedef futbolcuya <strong>en yakın değere</strong> sahip olduğunu düşündüğü başka bir futbolcuyu yazar.</li>
+                <li>Hedef futbolcunun kendisi seçilemez. İki oyuncu aynı turda aynı futbolcuyu seçemez.</li>
+                <li>1. Oyuncunun tahmini, 2. Oyuncu da tahmin edene kadar gizli kalır.</li>
+                <li>Hedef değere daha çok yaklaşan tur puanını alır (eşitlikte ikisi de 1 puan alır).</li>
+              </ul>
+          </div>
+        </div>
+      `;
+
+      // Başlat butonu dinleyicisi
+      document.getElementById('startGameBtn').addEventListener('click', () => {
+        const p1Val = document.getElementById('inputP1').value.trim();
+        const p2Val = document.getElementById('inputP2').value.trim();
+        state.p1Name = p1Val || 'Oyuncu 1';
+        state.p2Name = p2Val || 'Oyuncu 2';
+        state.currentRound = 1;
+        state.p1Score = 0;
+        state.p2Score = 0;
+        state.roundHistory = [];
+        sfx.confirm();
+        startGame();
+      });
+    }
+
+    /**
+     * OYUN TAHTASI (3 sütun): Sol = Oyuncu 1, Orta = Hedef Futbolcu, Sağ = Oyuncu 2
+     * Her oyuncu panelinde her tur (özellik) için ayrı bir kutu vardır.
+     * mode: 'p1' (Oyuncu 1 tahmin ediyor) | 'p2' (Oyuncu 2 tahmin ediyor) | 'result' (tur sonucu açıklandı)
+     */
+    function shortValue(player, qKey) {
+      // Kısa gösterim (doğum yerinde sadece şehir adı)
+      if (qKey === 'birthPlace') return player.birthPlace ? player.birthPlace.name : '—';
+      return formatValue(player, qKey);
+    }
+
+    function renderGuessView(activePlayerKey) {
+      renderBoard(activePlayerKey);
+    }
+
+    function renderBoard(mode) {
+      const target = state.targetPlayer;
+      const curIdx = state.currentRound - 1;
+      const isResult = mode === 'result';
+      const isLastRound = state.currentRound >= state.totalRounds;
+
+      // ---- Bir oyuncunun panelindeki tek bir özellik kutusu ----
+      function questionBox(key, idx) {
+        const r = state.rounds[idx];
+        const q = r.question;
+        const isP1 = key === 'p1';
+        const isCurrent = idx === curIdx;
+        const done = r.resolved;
+        const isActive = isCurrent && !done && mode === key;
+        const guess = isP1 ? r.p1Guess : r.p2Guess;
+        const pendingGuess = isCurrent && !done ? (isP1 ? state.p1GuessPlayer : state.p2GuessPlayer) : null;
+
+        let cls = 'q-box';
+        let tag = `Tur ${idx + 1}`;
+        let body = '';
+
+        if (done) {
+          const diff = isP1 ? r.diffP1 : r.diffP2;
+          const won = r.winner === key || r.winner === 'tie';
+          cls += won ? ' q-won' : ' q-lost';
+          tag = r.winner === 'tie' ? 'Berabere +1' : (won ? 'Kazandı +1' : 'Puan yok');
+          if (guess.isCityGuess) {
+            // Şehir tahmini: şehir adı + hedefe km uzaklığı
+            body = `
+              <div class="q-guess-name">📍 ${guess.name}</div>
+              <div class="q-diff tabular-nums">${formatDifference(diff, q.key)}</div>`;
+          } else {
+            body = `
+              <div class="q-guess-name">${guess.name}</div>
+              <div class="q-guess-meta">${[guess.team, guess.country].filter(Boolean).join(' · ')}</div>
+              <div class="q-value-row">
+                <span class="q-value-label">Değer</span>
+                <span class="q-value-line tabular-nums">${shortValue(guess, q.key)}</span>
+              </div>
+              <div class="q-diff tabular-nums">${formatDifference(diff, q.key)}</div>`;
+          }
+        } else if (isActive) {
+          cls += ' q-active';
+          tag = 'Sıra sende';
+          body = `
+            <div id="errorAlertBox" style="display: none;" class="alert-box"></div>
+            <div class="guess-form">
+              <div class="input-group">
+                <input type="text" id="playerSearchInput" class="search-input"
+                       placeholder="${q.key === 'birthPlace' ? 'Hedefin doğduğu şehri tahmin et (örn. Londra)...' : 'Hedefe en yakın futbolcu...'}" autocomplete="off" spellcheck="false" />
+                <ul id="autocompleteDropdown" class="autocomplete-list" style="display: none;"></ul>
+              </div>
+              <button id="confirmGuessBtn" class="btn ${isP1 ? 'btn-p1' : 'btn-p2'}">Tahmini Kilitle 🔒</button>
+            </div>`;
+        } else if (pendingGuess) {
+          // Tahmin yapıldı ama sonuç açıklanmadı: ismi GİZLİ tut
+          cls += ' q-locked';
+          tag = 'Kilitli';
+          body = `<div class="q-placeholder"><strong>🔒 Tahmin kilitlendi ✓</strong><small>Sonuç iki tahminden sonra açılır</small></div>`;
+        } else if (isCurrent) {
+          cls += ' q-waiting';
+          tag = 'Bekliyor';
+          body = `<div class="q-placeholder"><strong>⏳ Sıra rakipte…</strong></div>`;
+        } else {
+          cls += ' q-future';
+          body = `<div class="q-placeholder"><small>Henüz sorulmadı</small></div>`;
+        }
+
+        return `
+          <div class="${cls}">
+            <div class="q-box-head">
+              <span class="q-box-title"><span class="q-box-icon">${q.icon}</span>${BOX_TITLES[q.key]}</span>
+              <span class="q-box-tag">${tag}</span>
+            </div>
+            <div class="q-box-body">${body}</div>
+          </div>`;
+      }
+
+      // ---- Yan panel ----
+      function sidePanel(key) {
+        const isP1 = key === 'p1';
+        const name = isP1 ? state.p1Name : state.p2Name;
+        const score = isP1 ? state.p1Score : state.p2Score;
+        const isActive = mode === key;
+        const boxes = state.rounds.map((_, i) => questionBox(key, i)).join('');
+        return `
+          <section class="board-col side-panel side-${key} ${isActive ? 'is-active' : ''}">
+            <header class="side-head">
+              <span class="side-name">${name}</span>
+              <span class="side-score tabular-nums">${score}</span>
+            </header>
+            <div class="q-box-list">${boxes}</div>
+          </section>`;
+      }
+
+      // ---- Orta panel: Hedef Futbolcu ----
+      const cur = state.rounds[curIdx];
+      const propRows = state.rounds.map((r, i) => {
+        const known = r.resolved;
+        const rowCls = known ? 'done' : (i === curIdx ? 'current' : '');
+        return `
+          <div class="prop-row ${rowCls}">
+            <span class="prop-name">${r.question.icon} ${BOX_TITLES[r.question.key]}</span>
+            <span class="prop-val tabular-nums">${known ? shortValue(target, r.question.key) : '?'}</span>
+          </div>`;
+      }).join('');
+
+      let outcomeHtml = '';
+      if (isResult) {
+        let outcomeText;
+        if (cur.winner === 'p1') outcomeText = `🏆 Turu <span style="color: var(--p1-color);">${state.p1Name}</span> kazandı (+1)`;
+        else if (cur.winner === 'p2') outcomeText = `🏆 Turu <span style="color: var(--p2-color);">${state.p2Name}</span> kazandı (+1)`;
+        else outcomeText = `🤝 Berabere! İkisi de +1 puan aldı`;
+        outcomeHtml = `
+          <div class="value-block center-value">
+            <div class="value-label">Gerçek Değer</div>
+            <div class="value-line tabular-nums">${shortValue(target, cur.question.key)}</div>
+          </div>
+          <div class="round-outcome-banner">${outcomeText}</div>
+          <button id="nextRoundBtn" class="btn btn-primary">
+            ${isLastRound ? '🏁 Final Sonuçlarını Gör →' : `Sonraki Tur (${state.currentRound + 1} / ${state.totalRounds}) →`}
+          </button>`;
+      }
+
+      const centerPanel = `
+        <section class="board-col board-center">
+          <span class="target-kicker">Hedef Futbolcu</span>
+          <h1 class="target-name" lang="en">${target.name}</h1>
+          <div class="round-pill">Tur ${state.currentRound} / ${state.totalRounds}</div>
+          <div class="target-question-box">
+            <span class="target-question-icon">${cur.question.icon}</span>
+            <span>${cur.question.title}</span>
+          </div>
+          <div class="center-props">${propRows}</div>
+          ${outcomeHtml}
+        </section>`;
+
+      appRoot.innerHTML = `
+        <div class="board">
+          ${sidePanel('p1')}
+          ${centerPanel}
+          ${sidePanel('p2')}
+        </div>`;
+
+      if (isResult) {
+        document.getElementById('nextRoundBtn').addEventListener('click', () => {
+          sfx.click();
+          if (isLastRound) {
+            state.view = 'GAMEOVER';
+            render();
+          } else {
+            state.currentRound += 1;
+            beginRound();
+          }
+        });
+      } else {
+        setupAutocompleteAndSubmit(mode);
+      }
+    }
+
+    /**
+     * Otomatik Tamamlama ve Tahmin Doğrulama Fonksiyonu
+     */
+    function setupAutocompleteAndSubmit(activePlayerKey) {
+      const searchInput = document.getElementById('playerSearchInput');
+      const dropdown = document.getElementById('autocompleteDropdown');
+      const submitBtn = document.getElementById('confirmGuessBtn');
+      const errorBox = document.getElementById('errorAlertBox');
+
+      let selectedPlayer = null;   // Şehir turunda: seçilen şehir nesnesi
+      let highlightedIndex = -1;
+      let matchedList = [];
+      const isCityRound = state.question.key === 'birthPlace';
+
+      searchInput.focus();
+
+      function showError(msg) {
+        errorBox.textContent = msg;
+        errorBox.style.display = 'flex';
+        sfx.buzz();
+      }
+
+      function clearError() {
+        errorBox.style.display = 'none';
+        errorBox.textContent = '';
+      }
+
+      // Input değişimi
+      searchInput.addEventListener('input', () => {
+        clearError();
+        selectedPlayer = null;
+        const query = normalizeText(searchInput.value);
+
+        if (!query || query.length < 1) {
+          dropdown.style.display = 'none';
+          matchedList = [];
+          highlightedIndex = -1;
+          return;
+        }
+
+        // Filtrele: Aksan duyarsız arama
+        // Hedef, rakibin seçimi ve bu soruda verisi olmayan oyuncular listede hiç görünmez.
+        const qKey = state.question.key;
+        if (isCityRound) {
+          // DOĞUM YERİ TURU: oyuncu değil şehir aranır
+          matchedList = searchCities(searchInput.value);
+          if (matchedList.length === 0) {
+            dropdown.innerHTML = `<li class="autocomplete-item" style="color: var(--text-dim); cursor: default;">Eşleşen şehir bulunamadı</li>`;
+            dropdown.style.display = 'block';
+            highlightedIndex = -1;
+            return;
+          }
+          dropdown.innerHTML = matchedList.map((c, index) => `
+            <li class="autocomplete-item" data-index="${index}">
+              <span class="autocomplete-item-name">📍 ${c.name}</span>
+            </li>
+          `).join('');
+          dropdown.style.display = 'block';
+          highlightedIndex = -1;
+          return;
+        }
+        matchedList = state.allPlayers
+          .filter(p => {
+            if (p.id === state.targetPlayer.id) return false;
+            if (activePlayerKey === 'p2' && state.p1GuessPlayer && p.id === state.p1GuessPlayer.id) return false;
+            if (!hasValue(p, qKey)) return false;
+            return normalizeText(p.name).includes(query);
+          })
+          .sort((x, y) => {
+            // Önce isim başı eşleşenler
+            const xs = normalizeText(x.name).startsWith(query) ? 0 : 1;
+            const ys = normalizeText(y.name).startsWith(query) ? 0 : 1;
+            return xs - ys;
+          })
+          .slice(0, 8);
+
+        if (matchedList.length === 0) {
+          dropdown.innerHTML = `<li class="autocomplete-item" style="color: var(--text-dim); cursor: default;">Eşleşen futbolcu bulunamadı</li>`;
+          dropdown.style.display = 'block';
+          highlightedIndex = -1;
+          return;
+        }
+
+        dropdown.innerHTML = matchedList.map((p, index) => `
+          <li class="autocomplete-item" data-index="${index}">
+            <span class="autocomplete-item-name">${p.name}</span>
+            <span class="autocomplete-item-meta">
+              <span>${p.team || ''}</span>
+              <span>·</span>
+              <span>${p.country || ''}</span>
+            </span>
+          </li>
+        `).join('');
+
+        dropdown.style.display = 'block';
+        highlightedIndex = -1;
+      });
+
+      // Klavyeyle gezinme
+      searchInput.addEventListener('keydown', (e) => {
+        const items = dropdown.querySelectorAll('.autocomplete-item[data-index]');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (items.length === 0) return;
+          highlightedIndex = (highlightedIndex + 1) % items.length;
+          updateHighlight(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (items.length === 0) return;
+          highlightedIndex = (highlightedIndex - 1 + items.length) % items.length;
+          updateHighlight(items);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (highlightedIndex >= 0 && items[highlightedIndex]) {
+            selectPlayer(matchedList[highlightedIndex]);
+          } else {
+            handleFormSubmit();
+          }
+        } else if (e.key === 'Escape') {
+          dropdown.style.display = 'none';
+        }
+      });
+
+      function updateHighlight(items) {
+        items.forEach((item, idx) => {
+          if (idx === highlightedIndex) {
+            item.classList.add('selected');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('selected');
+          }
+        });
+      }
+
+      function selectPlayer(p) {
+        selectedPlayer = p;
+        searchInput.value = p.name;
+        dropdown.style.display = 'none';
+        clearError();
+        sfx.click();
+      }
+
+      // Tıklamayla seçim
+      dropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('.autocomplete-item[data-index]');
+        if (item) {
+          const idx = parseInt(item.dataset.index, 10);
+          if (matchedList[idx]) {
+            selectPlayer(matchedList[idx]);
+          }
+        }
+      });
+
+      // Form Onayı
+      function handleFormSubmit() {
+        clearError();
+        const rawInput = searchInput.value.trim();
+        const normInput = normalizeText(rawInput);
+
+        // DOĞUM YERİ TURU: şehir doğrulama (hedef şehrin kendisi de doğru tahmindir, 0 km)
+        if (isCityRound) {
+          const city = selectedPlayer || findCityExact(rawInput);
+          if (!city) {
+            showError('Lütfen açılır listeden geçerli bir şehir seçin! (örn. Londra, Barcelona, İstanbul)');
+            return;
+          }
+          // Oyuncu 2, Oyuncu 1'in seçtiği şehri seçemez
+          if (activePlayerKey === 'p2' && state.p1GuessPlayer && state.p1GuessPlayer.id === 'city:' + normalizeText(city.name)) {
+            showError(`${city.name} bu turda rakibiniz tarafından seçildi, başka bir şehir seçin!`);
+            selectedPlayer = null;
+            searchInput.value = '';
+            return;
+          }
+          sfx.confirm();
+          const cityGuess = makeCityGuess(city);
+          if (activePlayerKey === 'p1') {
+            state.p1GuessPlayer = cityGuess;
+            state.view = 'ROUND_P2';
+            render();
+          } else {
+            state.p2GuessPlayer = cityGuess;
+            calculateRoundResult();
+          }
+          return;
+        }
+
+        if (!selectedPlayer) {
+          // İsme tam veya en yakın eşleşen tek oyuncu var mı?
+          const exactMatch = state.allPlayers.find(p => normalizeText(p.name) === normInput);
+          if (exactMatch) {
+            selectedPlayer = exactMatch;
+          }
+        }
+
+        // 1. Kural: Listede olmayan isim kabul edilmez.
+        if (!selectedPlayer) {
+          showError('Lütfen açılır öneri listesinden geçerli bir futbolcu seçin!');
+          return;
+        }
+
+        // 2. Kural: Hedef oyuncunun kendisi tahmin olarak seçilemez!
+        if (selectedPlayer.id === state.targetPlayer.id) {
+          showError('Hedef oyuncunun kendisini seçemezsiniz! Başka bir futbolcu seçin.');
+          selectedPlayer = null;
+          searchInput.value = '';
+          return;
+        }
+
+        // 3. Kural: Oyuncu 2, Oyuncu 1'in seçtiği oyuncuyu seçemez!
+        if (activePlayerKey === 'p2' && state.p1GuessPlayer && selectedPlayer.id === state.p1GuessPlayer.id) {
+          showError(`Bu oyuncu (${selectedPlayer.name}) bu turda rakibiniz tarafından seçildi, başka bir oyuncu seçin!`);
+          selectedPlayer = null;
+          searchInput.value = '';
+          return;
+        }
+
+        // 4. Kural: NULL Kontrolü:
+        // Kullanıcının tahmin ettiği oyuncuda ilgili alan null ise tahmin geçersiz sayılmaz;
+        // kullanıcıya "Bu oyuncunun bu bilgisi veritabanında yok, başka bir oyuncu seç" uyarısı çıkar ve tekrar seçtirilir.
+        const qKey = state.question.key;
+        if (!hasValue(selectedPlayer, qKey)) {
+          showError(`Bu oyuncunun (${selectedPlayer.name}) bu bilgisi (${state.question.shortName}) veritabanında yok, lütfen başka bir oyuncu seçin!`);
+          selectedPlayer = null;
+          searchInput.value = '';
+          return;
+        }
+
+        // Geçerli seçim!
+        sfx.confirm();
+        if (activePlayerKey === 'p1') {
+          state.p1GuessPlayer = selectedPlayer;
+          state.view = 'ROUND_P2';
+          render();
+        } else {
+          state.p2GuessPlayer = selectedPlayer;
+          calculateRoundResult();
+        }
+      }
+
+      submitBtn.addEventListener('click', handleFormSubmit);
+    }
+
+    /**
+     * ========================================================================
+     * 7. BÖLÜM: TUR SONUCU HESAPLAMA VE SONUÇ EKRANI
+     * ========================================================================
+     */
+    function calculateRoundResult() {
+      const cur = state.rounds[state.currentRound - 1];
+      const target = state.targetPlayer;
+      const qKey = cur.question.key;
+      const p1 = state.p1GuessPlayer;
+      const p2 = state.p2GuessPlayer;
+
+      const diffP1 = calculateDifference(target, p1, qKey);
+      const diffP2 = calculateDifference(target, p2, qKey);
+
+      let winner;
+      if (diffP1 < diffP2) {
+        winner = 'p1';
+        state.p1Score += 1;
+      } else if (diffP2 < diffP1) {
+        winner = 'p2';
+        state.p2Score += 1;
+      } else {
+        winner = 'tie';
+        state.p1Score += 1;
+        state.p2Score += 1;
+      }
+
+      cur.p1Guess = p1;
+      cur.p2Guess = p2;
+      cur.diffP1 = diffP1;
+      cur.diffP2 = diffP2;
+      cur.winner = winner;
+      cur.resolved = true;
+
+      state.view = 'RESULT';
+      render();
+    }
+
+    function formatValue(player, qKey) {
+      if (qKey === 'birthPlace') {
+        const bp = player.birthPlace;
+        return bp ? `${bp.name} (${bp.lat.toFixed(1)}°, ${bp.lon.toFixed(1)}°)` : 'Bilinmiyor';
+      }
+      if (qKey === 'birthYear') return `${player[qKey]}`;   // yıl: binlik ayırıcı yok
+      return `${player[qKey].toLocaleString('tr-TR')} ${unitOf(qKey)}`;
+    }
+
+    function formatDifference(diff, qKey) {
+      if (diff === Infinity) return 'Veri Yok';
+      if (qKey === 'birthPlace') {
+        return `${diff.toLocaleString('tr-TR')} km mesafe`;
+      }
+      if (qKey === 'birthYear') return `${diff} yıl fark`;
+      return `${diff.toLocaleString('tr-TR')} ${unitOf(qKey)} fark`;
+    }
+
+    function renderResultView() {
+      sfx.success();
+      renderBoard('result');
+    }
+
+    /**
+     * ========================================================================
+     * 8. BÖLÜM: FİNAL VE OYUN BİTİŞ EKRANI
+     * ========================================================================
+     */
+    function renderGameOverView() {
+      sfx.success();
+      let outcomeTitle = '';
+      let outcomeDesc = '';
+
+      if (state.p1Score > state.p2Score) {
+        outcomeTitle = `🏆 ŞAMPİYON: ${state.p1Name}!`;
+        outcomeDesc = `${state.p1Name} futbolcu bilgisini konuşturdu ve düelloyu kazandı!`;
+      } else if (state.p2Score > state.p1Score) {
+        outcomeTitle = `🏆 ŞAMPİYON: ${state.p2Name}!`;
+        outcomeDesc = `${state.p2Name} futbolcu bilgisini konuşturdu ve düelloyu kazandı!`;
+      } else {
+        outcomeTitle = `🤝 DOSTLUK KAZANDI: BERABERE!`;
+        outcomeDesc = `İki oyuncu da eşit puan toplayarak müthiş bir futbol bilgisi sergiledi.`;
+      }
+
+      // Tur geçmişi listesi HTML'i
+      const historyRowsHtml = state.roundHistory.map(r => {
+        let winnerTag = '';
+        if (r.winner === 'p1') winnerTag = `<strong style="color: var(--p1-color);">${state.p1Name} kazandı</strong>`;
+        else if (r.winner === 'p2') winnerTag = `<strong style="color: var(--p2-color);">${state.p2Name} kazandı</strong>`;
+        else winnerTag = `<strong style="color: var(--accent-gold);">Berabere</strong>`;
+
+        return `
+          <div class="history-item">
+            <div>
+              <div style="font-weight: 700; color: #fff;">
+                Tur ${r.roundNum}: ${r.question.shortName} · Gerçek: ${shortValue(r.targetPlayer, r.question.key)}
+              </div>
+              <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;">
+                ${state.p1Name}: <em>${r.p1Guess.name}</em> (${formatDifference(r.diffP1, r.question.key)}) · 
+                ${state.p2Name}: <em>${r.p2Guess.name}</em> (${formatDifference(r.diffP2, r.question.key)})
+              </div>
+            </div>
+            <div>${winnerTag}</div>
+          </div>
+        `;
+      }).join('');
+
+      appRoot.innerHTML = `
+        <div class="card-panel gameover-podium">
+          <div class="gameover-trophy">🏆</div>
+          <h2 class="gameover-winner-title">${outcomeTitle}</h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem;">${outcomeDesc}</p>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.4rem;">Hedef futbolcu: <strong style="color:#fff;" lang="en">${state.targetPlayer.name}</strong></p>
+
+          <!-- Skor Göstergesi -->
+          <div class="gameover-score-pill">
+            <div class="gameover-score-item">
+              <span style="font-size: 0.85rem; color: var(--p1-color); font-weight: 700; text-transform: uppercase;">${state.p1Name}</span>
+              <span class="gameover-score-num tabular-nums" style="color: var(--p1-color);">${state.p1Score}</span>
+            </div>
+            <span style="font-size: 1.8rem; font-weight: 800; color: var(--text-dim);">-</span>
+            <div class="gameover-score-item">
+              <span style="font-size: 0.85rem; color: var(--p2-color); font-weight: 700; text-transform: uppercase;">${state.p2Name}</span>
+              <span class="gameover-score-num tabular-nums" style="color: var(--p2-color);">${state.p2Score}</span>
+            </div>
+          </div>
+
+          <button id="playAgainBtn" class="btn btn-primary" style="max-width: 320px; margin: 0 auto 2rem;">
+            🔄 Yeniden Oyna
+          </button>
+
+          <!-- Tur Özeti -->
+          <div class="history-section">
+            <h3 class="history-title">📊 Tur Özeti ve Karşılaştırmalar</h3>
+            <div class="history-list">
+              ${historyRowsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('playAgainBtn').addEventListener('click', () => {
+        sfx.click();
+        state.view = 'SETUP';
+        render();
+      });
+    }
+
+    /**
+     * ========================================================================
+     * 9. BÖLÜM: UYGULAMA BAŞLATMA (Bootstrap)
+     * ========================================================================
+     */
+    async function initGame() {
+      // Oyuncu verisini TEK bir yerden yükle
+      state.allPlayers = await loadPlayers();
+      CITY_DB = buildCityDb(state.allPlayers);
+      console.log(`[Futbolcu Düellosu] ${state.allPlayers.length} oyuncu başarıyla yüklendi.`);
+      render();
+    }
+
+    initGame();
+  </script>
+</body>
+</html>
