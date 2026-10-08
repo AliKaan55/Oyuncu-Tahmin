@@ -1205,6 +1205,9 @@
       { key: 'heightCm',         title: 'Boyu kaç cm?',                                icon: '📏', unit: 'cm',   shortName: 'Boy (cm)' },
       { key: 'birthYear',        title: 'Hangi yıl doğdu?',                            icon: '🎂', unit: 'yılı', shortName: 'Doğum Yılı' },
       { key: 'peakMarketValueM', title: 'Kariyer zirvesindeki piyasa değeri kaç milyon €?', icon: '💶', unit: 'M€', shortName: 'Zirve Değer (M€)' },
+      { key: 'leagueGoals',      title: 'Kariyerinde toplam kaç lig golü attı?',       icon: '🥅', unit: 'gol',  shortName: 'Lig Golü' },
+      { key: 'careerTeams',      title: 'Kariyerinde toplam kaç takımda oynadı?',      icon: '🔁', unit: 'takım', shortName: 'Kariyer Takımı' },
+      { key: 'trophies',         title: 'Kariyerinde toplam kaç kupa kazandı?',        icon: '🏆', unit: 'kupa', shortName: 'Kupa Sayısı' },
       { key: 'birthPlace',       title: 'Nerede doğdu?',                               icon: '📍', unit: 'km mesafe', shortName: 'Doğum Yeri' }
     ];
 
@@ -1218,6 +1221,9 @@
       heightCm: 'Boyu',
       birthYear: 'Doğum yılı',
       peakMarketValueM: 'Zirve piyasa değeri',
+      leagueGoals: 'Toplam lig golü',
+      careerTeams: 'Kariyer takım sayısı',
+      trophies: 'Kazandığı kupa',
       birthPlace: 'Doğum yeri'
     };
 
@@ -2172,6 +2178,7 @@
         const bp = player.birthPlace;
         return bp ? `${bp.name} (${bp.lat.toFixed(1)}°, ${bp.lon.toFixed(1)}°)` : 'Bilinmiyor';
       }
+      if (player[qKey] === null || player[qKey] === undefined) return 'Veri yok';
       if (qKey === 'birthYear') return `${player[qKey]}`;   // yıl: binlik ayırıcı yok
       return `${player[qKey].toLocaleString('tr-TR')} ${unitOf(qKey)}`;
     }

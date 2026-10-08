@@ -403,6 +403,143 @@ def fetch_wikidata(tm_ids, cache_path, refresh, offline=False):
 
 
 # --------------------------------------------------------------------------- #
+# 2b) Kariyer verisi: lig golü, takım sayısı (Wikidata) + kupa sayısı (Transfermarkt)
+# --------------------------------------------------------------------------- #
+CAREER_CACHE = "wikidata_career_cache.json"   # {oyuncu qid: {"teams": n|null, "goals": n|null}}
+TROPHY_CACHE = "tm_trophies_cache.json"       # {transfermarkt oyuncu id: kupa sayısı}
+CAREER_BATCH = 40
+TM_TROPHY_URL = "https://www.transfermarkt.com/-/erfolge/spieler/{pid}"
+
+# Gençlik / yedek takımlar takım sayısına katılmasın (Barcelona B, Real Madrid Castilla, X U19 ...)
+_YOUTH_WORDS = re.compile(r"\b(U-?\d{2}|youth|juvenil\w*|academy|reserves?|castilla|primavera|jong|next gen)\b", re.I)
+_YOUTH_SUFFIX = re.compile(r"\s(II|III|B)$")
+
+
+def is_youth_team(name):
+    return bool(name and (_YOUTH_WORDS.search(name) or _YOUTH_SUFFIX.search(name.strip())))
+
+
+def build_career_query(qids):
+    """Oyuncuların TÜM takım üyelikleri (P54) + ligdeki maç (P1350) / gol (P1351) niteleyicileri."""
+    values = " ".join(f"wd:{q}" for q in qids)
+    return _PREFIXES + f"""
+SELECT ?item ?st ?team ?goals ?apps WHERE {{
+  VALUES ?item {{ {values} }}
+  ?item p:P54 ?st .
+  ?st ps:P54 ?team .
+  OPTIONAL {{ ?st pq:P1351 ?goals . }}
+  OPTIONAL {{ ?st pq:P1350 ?apps . }}
+}}"""
+
+
+def summarize_career(rows, clubs):
+    """rows: [(statement uri, takım qid, gol|None, maç|None)].
+    -> {"teams": farklı KULÜP sayısı | None, "goals": toplam lig golü | None}
+    Gol toplamı sadece güvenilirse verilir: maç sayısı yazılı olan HER kulüp döneminde gol de yazılı olmalı."""
+    stmts = {}
+    for st, team, goals, apps in rows:
+        cur = stmts.setdefault(st, {"team": team, "goals": None, "apps": None})
+        if goals is not None:
+            cur["goals"] = max(cur["goals"] or 0, goals)
+        if apps is not None:
+            cur["apps"] = max(cur["apps"] or 0, apps)
+    kept = [s for s in stmts.values()
+            if clubs.get(s["team"], {}).get("club") and not is_youth_team(clubs[s["team"]].get("name"))]
+    teams = len({s["team"] for s in kept}) or None
+    goals = None
+    if any(s["goals"] is not None for s in kept):
+        missing = any(s["apps"] and s["goals"] is None for s in kept)
+        if not missing:
+            goals = sum(s["goals"] or 0 for s in kept)
+    return {"teams": teams, "goals": goals}
+
+
+def _fnum(b, key):
+    v = val(b, key)
+    try:
+        return int(float(v)) if v is not None else None
+    except ValueError:
+        return None
+
+
+def fetch_careers(qids, refresh=False, cache_path=CAREER_CACHE, clubs_path=CLUBS_CACHE):
+    """Wikidata'dan kariyer özetini çeker (artımlı, yarıda kesilirse kaldığı yerden devam eder)."""
+    cache = _load(cache_path, refresh)
+    clubs = _load(clubs_path, False)
+    todo = [q for q in dict.fromkeys(qids) if q and q not in cache]
+    print(f"[CAREER] önbellekte {len(cache)} oyuncu var, çekilecek: {len(todo)}")
+    for start in range(0, len(todo), CAREER_BATCH):
+        batch = todo[start:start + CAREER_BATCH]
+        print(f"[CAREER] {start + 1}-{start + len(batch)} / {len(todo)}")
+        try:
+            rows = {q: [] for q in batch}
+            for b in run_sparql(build_career_query(batch)):
+                rows.setdefault(qid_of(val(b, "item")), []).append(
+                    (val(b, "st"), qid_of(val(b, "team")), _fnum(b, "goals"), _fnum(b, "apps")))
+            unknown = sorted({t for r in rows.values() for _, t, _, _ in r if t not in clubs})
+            for i in range(0, len(unknown), CLUB_BATCH):
+                clubs.update(parse_club_info(run_sparql(build_club_info_query(unknown[i:i + CLUB_BATCH]))))
+        except Exception as e:
+            print(f"[CAREER][UYARI] Wikidata sorgusu başarısız ({e}). Scripti tekrar çalıştırırsan kaldığı yerden devam eder.")
+            break
+        for q in batch:
+            cache[q] = summarize_career(rows.get(q, []), clubs)
+        _save(clubs_path, clubs)
+        _save(cache_path, cache)
+        time.sleep(1)
+    return cache
+
+
+def parse_trophy_count(html):
+    """Transfermarkt 'erfolge' sayfasındaki başlıklardan kupa sayısı. Başlıklar '3x Champions League winner'
+    biçiminde ise 3, 'x' öneki yoksa ve kazanan/şampiyon ifadesi varsa 1 sayılır. Bulunamazsa None."""
+    heads = [re.sub(r"<[^>]+>", " ", h) for h in re.findall(r"<h2[^>]*>(.*?)</h2>", html, flags=re.S | re.I)]
+    heads = [re.sub(r"\s+", " ", h).strip() for h in heads]
+    total, found = 0, False
+    for h in heads:
+        m = re.match(r"^(\d+)\s*[xX]\s+\S", h)
+        if m:
+            total += int(m.group(1)); found = True
+        elif re.search(r"\b(winner|champion|cup winner)\b", h, re.I):
+            total += 1; found = True
+    return (total if found else None), heads
+
+
+def fetch_tm_trophies(tm_ids, refresh=False, cache_path=TROPHY_CACHE, limit=None):
+    """Transfermarkt profil/başarılar sayfalarından kupa sayısı (yavaş: oyuncu başına ~3 sn, kaldığı yerden devam eder).
+    Sayfa yapısı değişmişse 5 üst üste başarısızlıkta durur."""
+    cache = _load(cache_path, refresh)
+    todo = [str(i) for i in dict.fromkeys(tm_ids) if str(i) not in cache]
+    if limit:
+        todo = todo[:limit]
+    print(f"[TROPHY] önbellekte {len(cache)} oyuncu var, çekilecek: {len(todo)} (~{len(todo) * 3 // 60} dk)")
+    fails = 0
+    for n, pid in enumerate(todo, 1):
+        try:
+            r = requests.get(TM_TROPHY_URL.format(pid=pid), timeout=30,
+                             headers={"User-Agent": BROWSER_UA, "Accept-Language": "en-US,en;q=0.9"})
+            if r.status_code != 200:
+                print(f"[TROPHY][UYARI] {pid}: HTTP {r.status_code}")
+                fails += 1
+            else:
+                count, _ = parse_trophy_count(r.text)
+                cache[pid] = count          # None = sayfada kupa başlığı yok (bilinmiyor); tekrar sorgulanmaz
+                fails = 0
+        except requests.RequestException as e:
+            print(f"[TROPHY][UYARI] {pid}: ağ hatası ({e})")
+            fails += 1
+        if fails >= 5:
+            print("[TROPHY][UYARI] üst üste 5 başarısız istek, durduruluyor (engellenmiş olabilirsin ya da sayfa yapısı değişti).")
+            break
+        if n % 25 == 0:
+            _save(cache_path, cache)
+            print(f"[TROPHY] {n} / {len(todo)}")
+        time.sleep(3)
+    _save(cache_path, cache)
+    return cache
+
+
+# --------------------------------------------------------------------------- #
 # 3) Birleştirme
 # --------------------------------------------------------------------------- #
 def norm_height(h):
@@ -433,6 +570,7 @@ def peak_value_m(eur):
 
 
 QUESTION_FIELDS = ["intlGoals", "intlCaps", "heightCm", "birthYear", "peakMarketValueM", "birthPlace"]
+CAREER_FIELDS = ["leagueGoals", "careerTeams", "trophies"]   # sadece raporda; oyuncu eleme sayımına katılmaz
 
 
 TEAM_REPORT = []   # merge() her oyuncunun takımının nereden geldiğini buraya yazar -> team_report.csv
@@ -503,8 +641,10 @@ def has_foreign_script(name):
 
 def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, overrides=None, wd_teams=None,
           tr_min_sitelinks=0, extra_min_fields=1, wd_newer_than=None, wd_undated_wins=False,
-          squad_map=None, squad_clubs=None):
+          squad_map=None, squad_clubs=None, wd_careers=None, tm_trophies=None):
     overrides = overrides or {}
+    wd_careers = wd_careers or {}
+    tm_trophies = tm_trophies or {}
     wd_teams = wd_teams or {}
     squad_map = squad_map or {}        # {oyuncu id: kulüp id}  (Transfermarkt güncel kadro sayfalarından)
     squad_clubs = squad_clubs or set() # kadrosu başarıyla çekilen kulüp id'leri
@@ -626,6 +766,9 @@ def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, o
             "intlCaps": num(row.get("international_caps")),
             "intlGoals": num(row.get("international_goals")),
             "peakMarketValueM": peak_value_m(row.get("highest_market_value_in_eur")),
+            "leagueGoals": (wd_careers.get((w or {}).get("qid")) or {}).get("goals"),
+            "careerTeams": (wd_careers.get((w or {}).get("qid")) or {}).get("teams"),
+            "trophies": tm_trophies.get(tm_id),
             "_sl": (w or {}).get("sitelinks", 0),
         }
         if guess_only:
@@ -654,7 +797,7 @@ def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, o
 
 def report(players):
     print(f"\n[ÖZET] toplam oyuncu: {len(players)}")
-    for k in QUESTION_FIELDS:
+    for k in QUESTION_FIELDS + CAREER_FIELDS:
         n = sum(1 for p in players if p[k] is not None)
         print(f"   {k:18s} dolu: {n:5d}  ({100 * n / max(1, len(players)):.0f}%)")
 
@@ -690,8 +833,24 @@ def main():
     ap.add_argument("--no-squads", action="store_true",
                     help="Transfermarkt kadro sayfalarından güncel kadro çekmeyi kapat")
     ap.add_argument("--refresh-squads", action="store_true", help="Kadro sayfalarını önbelleği yok sayıp yeniden çek")
+    ap.add_argument("--no-careers", action="store_true", help="Lig golü / kariyer takım sayısını Wikidata'dan çekme")
+    ap.add_argument("--refresh-careers", action="store_true", help="Kariyer önbelleğini yok sayıp yeniden çek")
+    ap.add_argument("--trophies", action="store_true",
+                    help="Kupa sayısını Transfermarkt sayfalarından çek (YAVAŞ: oyuncu başına ~3 sn, kaldığı yerden devam eder)")
+    ap.add_argument("--trophy-limit", type=int, default=None, help="Bir çalıştırmada en fazla kaç oyuncunun kupası çekilsin")
+    ap.add_argument("--debug-trophies", metavar="TM_ID", help="Tek oyuncunun Transfermarkt başarı başlıklarını yazdır (ayrıştırıcıyı test etmek için)")
     ap.add_argument("--why", metavar="İSİM", help="Tek oyuncunun takımı neden öyle çıktı? (canlı Wikidata sorgusu, oyun verisi üretmez)")
     a = ap.parse_args()
+
+    if a.debug_trophies:
+        r = requests.get(TM_TROPHY_URL.format(pid=a.debug_trophies), timeout=30,
+                         headers={"User-Agent": BROWSER_UA, "Accept-Language": "en-US,en;q=0.9"})
+        count, heads = parse_trophy_count(r.text)
+        print(f"HTTP {r.status_code} | bulunan <h2> başlıkları:")
+        for h in heads:
+            print("  -", h)
+        print(f"-> hesaplanan kupa sayısı: {count}")
+        return
 
     tm = load_transfermarkt(a.tm_csv)
     snap = snapshot_date(a.tm_csv or TM_PLAYERS_URL)
@@ -725,9 +884,18 @@ def main():
     if not a.no_wd_teams:
         qids = [r["qid"] for r in wd.values() if r.get("qid")]
         wd_teams = fetch_current_teams(qids, refresh=a.refresh_teams) if not a.offline else _load(TEAMS_CACHE, False)
+    wd_careers = {}
+    if not a.no_careers:
+        qids = [r["qid"] for k, r in wd.items() if k in cand_ids and r.get("qid")]
+        wd_careers = fetch_careers(qids, a.refresh_careers) if not a.offline else _load(CAREER_CACHE, False)
+    tm_trophies = {}
+    if a.trophies and not a.offline:
+        tm_trophies = fetch_tm_trophies(sorted(cand_ids, key=int), False, limit=a.trophy_limit)
+    elif Path(TROPHY_CACHE).exists():
+        tm_trophies = _load(TROPHY_CACHE, False)      # daha önce çekilmişse kullan
     players = merge(cand, wd, a.min_sitelinks, a.min_fields, a.current_season, load_team_overrides(), wd_teams,
                     a.tr_min_sitelinks, a.extra_min_fields, a.wd_newer_than, a.wd_undated_wins,
-                    squad_map, squad_clubs)
+                    squad_map, squad_clubs, wd_careers, tm_trophies)
     report(players)
     write_team_report()
     Path(a.out).write_text(json.dumps(players, ensure_ascii=False, indent=1), encoding="utf-8")
