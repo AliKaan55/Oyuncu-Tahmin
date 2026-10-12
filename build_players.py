@@ -490,52 +490,68 @@ def fetch_careers(qids, refresh=False, cache_path=CAREER_CACHE, clubs_path=CLUBS
     return cache
 
 
+# Takım kupası sayılacak başlıklarda geçmesi gereken ifadeler
+_TROPHY_WORDS = re.compile(r"(champion|winner|\bcup\b|copa|coppa|pokal|ta[cç]a|shield|supercup|super cup|title)", re.I)
+# Bunlar geçiyorsa kupa DEĞİL: bireysel ödül, ikincilik, ay/sezon oyuncusu vb.
+_NOT_TROPHY = re.compile(r"(player of|golden|top scor|top assist|best |boot|\bball\b|award|team of the|goal of|"
+                         r"young player|footballer|\bmvp\b|scorer|assist|runner|finalist|second place|third place|"
+                         r"individual|of the (month|year|season|week|tournament)|\bpoty\b|ballon|trophy of honour|"
+                         r"^all |overall|total)", re.I)
+
+
+def classify_heading(h):
+    """-> kupa sayısı (0 = kupa değil). '3x X winner' -> 3, öneksiz -> 1."""
+    if not h or _NOT_TROPHY.search(h) or not _TROPHY_WORDS.search(h):
+        return 0
+    m = re.match(r"^(\d+)\s*[xX]\s+\S", h)
+    return int(m.group(1)) if m else 1
+
+
 def parse_trophy_count(html):
-    """Transfermarkt 'erfolge' sayfasındaki başlıklardan kupa sayısı. Başlıklar '3x Champions League winner'
-    biçiminde ise 3, 'x' öneki yoksa ve kazanan/şampiyon ifadesi varsa 1 sayılır. Bulunamazsa None."""
+    """Transfermarkt 'erfolge' sayfasındaki başlıklardan TAKIM kupası sayısı (bireysel ödüller sayılmaz).
+    -> (toplam | None, [(başlık, sayılan), ...])"""
     heads = [re.sub(r"<[^>]+>", " ", h) for h in re.findall(r"<h2[^>]*>(.*?)</h2>", html, flags=re.S | re.I)]
     heads = [re.sub(r"\s+", " ", h).strip() for h in heads]
-    total, found = 0, False
-    for h in heads:
-        m = re.match(r"^(\d+)\s*[xX]\s+\S", h)
-        if m:
-            total += int(m.group(1)); found = True
-        elif re.search(r"\b(winner|champion|cup winner)\b", h, re.I):
-            total += 1; found = True
-    return (total if found else None), heads
+    rows = [(h, classify_heading(h)) for h in heads]
+    total = sum(n for _, n in rows)
+    return (total if total else None), rows
 
 
 def fetch_tm_trophies(tm_ids, refresh=False, cache_path=TROPHY_CACHE, limit=None):
     """Transfermarkt profil/başarılar sayfalarından kupa sayısı (yavaş: oyuncu başına ~3 sn, kaldığı yerden devam eder).
-    Sayfa yapısı değişmişse 5 üst üste başarısızlıkta durur."""
+    Sayfa yapısı değişmişse 5 üst üste başarısızlıkta durur. (Önbellek eski ayrıştırıcıyla dolduysa tm_trophies_cache.json'u sil.)"""
     cache = _load(cache_path, refresh)
     todo = [str(i) for i in dict.fromkeys(tm_ids) if str(i) not in cache]
     if limit:
         todo = todo[:limit]
     print(f"[TROPHY] önbellekte {len(cache)} oyuncu var, çekilecek: {len(todo)} (~{len(todo) * 3 // 60} dk)")
     fails = 0
-    for n, pid in enumerate(todo, 1):
-        try:
-            r = requests.get(TM_TROPHY_URL.format(pid=pid), timeout=30,
-                             headers={"User-Agent": BROWSER_UA, "Accept-Language": "en-US,en;q=0.9"})
-            if r.status_code != 200:
-                print(f"[TROPHY][UYARI] {pid}: HTTP {r.status_code}")
+    try:
+        for n, pid in enumerate(todo, 1):
+            try:
+                r = requests.get(TM_TROPHY_URL.format(pid=pid), timeout=30,
+                                 headers={"User-Agent": BROWSER_UA, "Accept-Language": "en-US,en;q=0.9"})
+                if r.status_code != 200:
+                    print(f"[TROPHY][UYARI] {pid}: HTTP {r.status_code}")
+                    fails += 1
+                else:
+                    count, _ = parse_trophy_count(r.text)
+                    cache[pid] = count          # None = sayfada kupa başlığı yok (bilinmiyor); tekrar sorgulanmaz
+                    fails = 0
+            except requests.RequestException as e:
+                print(f"[TROPHY][UYARI] {pid}: ağ hatası ({e})")
                 fails += 1
-            else:
-                count, _ = parse_trophy_count(r.text)
-                cache[pid] = count          # None = sayfada kupa başlığı yok (bilinmiyor); tekrar sorgulanmaz
-                fails = 0
-        except requests.RequestException as e:
-            print(f"[TROPHY][UYARI] {pid}: ağ hatası ({e})")
-            fails += 1
-        if fails >= 5:
-            print("[TROPHY][UYARI] üst üste 5 başarısız istek, durduruluyor (engellenmiş olabilirsin ya da sayfa yapısı değişti).")
-            break
-        if n % 25 == 0:
-            _save(cache_path, cache)
-            print(f"[TROPHY] {n} / {len(todo)}")
-        time.sleep(3)
-    _save(cache_path, cache)
+            if fails >= 5:
+                print("[TROPHY][UYARI] üst üste 5 başarısız istek, durduruluyor (engellenmiş olabilirsin ya da sayfa yapısı değişti).")
+                break
+            if n % 25 == 0:
+                _save(cache_path, cache)
+                print(f"[TROPHY] {n} / {len(todo)}")
+            time.sleep(3)
+    except KeyboardInterrupt:
+        print("\n[TROPHY] Durduruldu, o ana kadar çekilenler kaydediliyor. Tekrar çalıştırırsan kaldığı yerden devam eder.")
+    finally:
+        _save(cache_path, cache)
     return cache
 
 
@@ -769,6 +785,8 @@ def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, o
             "leagueGoals": (wd_careers.get((w or {}).get("qid")) or {}).get("goals"),
             "careerTeams": (wd_careers.get((w or {}).get("qid")) or {}).get("teams"),
             "trophies": tm_trophies.get(tm_id),
+            "sitelinks": (w or {}).get("sitelinks", 0),       # şöhret ölçüsü (Wikipedia dil sayısı); hedef seçiminde kullanılır
+            "superLig": bool(team) and any(same_club(team, n) for n in TR_CLUB_NAMES.values()),
             "_sl": (w or {}).get("sitelinks", 0),
         }
         if guess_only:
@@ -847,8 +865,8 @@ def main():
                          headers={"User-Agent": BROWSER_UA, "Accept-Language": "en-US,en;q=0.9"})
         count, heads = parse_trophy_count(r.text)
         print(f"HTTP {r.status_code} | bulunan <h2> başlıkları:")
-        for h in heads:
-            print("  -", h)
+        for h, n in heads:
+            print(f"  {'+' + str(n) if n else ' -':>4}  {h}")
         print(f"-> hesaplanan kupa sayısı: {count}")
         return
 

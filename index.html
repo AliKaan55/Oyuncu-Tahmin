@@ -1567,9 +1567,21 @@
      * startGame(): TEK bir hedef futbolcu seçer, onun 5 özelliğini (tur) belirler.
      * Hedef oyuncunun en az QUESTIONS_PER_GAME sorulabilir alanı olmalıdır.
      */
+    const FAMOUS_MIN_SITELINKS = 80;   // dünya çapında ünlü sayılma eşiği (Wikipedia dil sayısı)
+    const MIN_TARGET_VALUE_M = 25;     // ünlü olmayanlar için asgari değer (milyon €, zirve piyasa değeri)
+
+    function isTargetable(p) {
+      if (p.superLig) return true;
+      if ((p.sitelinks || 0) >= FAMOUS_MIN_SITELINKS) return true;
+      return (p.peakMarketValueM || 0) >= MIN_TARGET_VALUE_M;
+    }
+
     function startGame() {
-      // guessOnly: sadece tahmin listesinde çıkar, hedef futbolcu olarak seçilmez (ek Türk oyuncular)
-      const targetable = state.allPlayers.filter(p => !p.guessOnly);
+      // Hedef futbolcu kuralları (tahmin listesi etkilenmez, herkes tahmin edilebilir):
+      //  1) Dünya çapında ünlü (Wikipedia dil sayısı yüksek) oyuncularda kısıtlama yok
+      //  2) Ünlü değilse zirve piyasa değeri en az 25M € olmalı
+      //  3) Süper Lig'de oynayan her oyuncu çıkabilir
+      const targetable = state.allPlayers.filter(isTargetable);
       let pool = targetable.filter(p => countAskable(p) >= QUESTIONS_PER_GAME);
       if (pool.length === 0) {
         // Yeterince dolu oyuncu yoksa en çok alanı dolu olanları kullan
