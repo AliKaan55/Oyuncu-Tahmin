@@ -480,6 +480,55 @@
       box-shadow: 0 4px 15px rgba(249, 115, 22, 0.25);
     }
 
+    /* Zorluk seçici */
+    .diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+    .league-grid { grid-template-columns: repeat(2, 1fr); }
+    .diff-opt {
+      font-family: var(--font-body); cursor: pointer; text-align: center;
+      padding: 0.8rem 0.4rem; border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.05); color: #fff;
+      border: 1px solid var(--border-subtle); transition: all 0.2s;
+    }
+    .diff-opt:hover { background: rgba(255,255,255,0.1); }
+    .diff-opt strong { display: block; font-size: 1rem; }
+    .diff-opt small { display: block; color: var(--text-muted); font-size: 0.72rem; margin-top: 0.2rem; }
+    .diff-opt.selected { border-color: var(--accent-pitch); background: rgba(16,185,129,0.14); box-shadow: 0 0 0 3px var(--accent-pitch-glow); }
+
+    /* Hedef fotoğrafı */
+    .target-photo-wrap { width: 170px; height: 210px; margin: 0.4rem auto 0.6rem; }
+    .target-photo, .target-photo-fallback {
+      width: 170px; height: 210px; border-radius: 22px; object-fit: contain; object-position: center;
+      border: 3px solid var(--accent-pitch); box-shadow: 0 0 18px var(--accent-pitch-glow);
+      background: linear-gradient(160deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+    }
+    .target-photo-fallback { display: none; align-items: center; justify-content: center; font-size: 3.4rem; font-weight: 900; color: var(--text-muted); }
+
+    /* Süre sayacı */
+    .turn-timer { margin-bottom: 0.7rem; }
+    .turn-timer-text { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .turn-timer-bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+    .turn-timer-fill { height: 100%; width: 100%; background: var(--accent-pitch); transition: width 0.25s linear, background 0.3s; }
+    .turn-timer.warn .turn-timer-fill { background: var(--accent-gold); }
+    .turn-timer.danger .turn-timer-fill { background: var(--accent-crimson); }
+    .turn-timer.danger .turn-timer-text { color: var(--accent-crimson); }
+
+    /* Joker */
+    .joker-btn {
+      font-family: var(--font-body); font-weight: 700; font-size: 0.85rem; cursor: pointer;
+      margin-top: 0.6rem; width: 100%; padding: 0.6rem; border-radius: var(--radius-md);
+      background: rgba(245,158,11,0.12); color: var(--accent-gold);
+      border: 1px dashed rgba(245,158,11,0.5); transition: all 0.2s;
+    }
+    .joker-btn:hover:not(:disabled) { background: rgba(245,158,11,0.22); }
+    .joker-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .joker-hint {
+      margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm);
+      background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.35);
+      color: #fde68a; font-size: 0.88rem; line-height: 1.35;
+    }
+    .joker-badge { font-size: 0.8rem; font-weight: 700; color: var(--accent-gold); margin-left: 0.5rem; }
+    .joker-badge.used { color: var(--text-muted); text-decoration: line-through; }
+
     .btn-secondary {
       background: rgba(255, 255, 255, 0.08);
       color: #fff;
@@ -1514,6 +1563,19 @@
       p1Score: 0,
       p2Score: 0,
 
+      // Zorluk: 'easy' | 'normal' | 'hard'
+      difficulty: 'normal',
+
+      // Lig filtresi: 'all' | 'TR1' | 'ES1' | 'GB1'
+      league: 'all',
+
+      // Tahmin başına süre (saniye): 30 | 60 | 0 (sınırsız)
+      timeLimit: 0,
+
+      // Joker (ipucu) hakkı: oyuncu başına oyun boyunca 1 adet
+      p1Joker: 1,
+      p2Joker: 1,
+
       // Aktif Tur Verileri
       targetPlayer: null,
       question: null,
@@ -1576,15 +1638,57 @@
       return (p.peakMarketValueM || 0) >= MIN_TARGET_VALUE_M;
     }
 
+    // Zorluk seviyeleri: oyuncunun ne kadar bilindiği Wikipedia dil sayısıyla (sitelinks) ölçülür.
+    const DIFFICULTIES = {
+      easy:   { label: 'Kolay',  icon: '🟢', desc: 'En bilinen yıldızlar',   min: 60, max: Infinity },
+      normal: { label: 'Normal', icon: '🟡', desc: 'Tanınmış oyuncular',     min: 30, max: 59 },
+      hard:   { label: 'Zor',    icon: '🔴', desc: 'Az bilinen oyuncular',   min: 0,  max: 29 }
+    };
+    const MIN_DIFFICULTY_POOL = 20; // havuz bundan küçükse (örn. test verisi) tüm hedeflenebilirler kullanılır
+
+    function inDifficulty(p, diffKey) {
+      const d = DIFFICULTIES[diffKey] || DIFFICULTIES.normal;
+      const fame = p.sitelinks || 0;
+      return fame >= d.min && fame <= d.max;
+    }
+
+    // Lig modları: hedef futbolcu seçilen ligin KULÜPLERİNDE oynayan biri olur.
+    const LEAGUES = {
+      all: { label: 'Tüm Ligler',        icon: '🌍', desc: 'Dünya geneli' },
+      TR1: { label: 'Trendyol Süper Lig', icon: '🇹🇷', desc: 'Türkiye' },
+      ES1: { label: 'La Liga',            icon: '🇪🇸', desc: 'İspanya' },
+      GB1: { label: 'Premier Lig',        icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', desc: 'İngiltere' }
+    };
+    // Lig modunda zorluk, o ligin içindeki tanınırlık sıralamasına göre belirlenir:
+    // Kolay = ligin en tanınan %30'u, Normal = orta %40, Zor = en az tanınan %30.
+    const LEAGUE_TIERS = { easy: [0, 0.30], normal: [0.30, 0.70], hard: [0.70, 1] };
+
+    function buildTargetPool() {
+      const base = state.allPlayers.filter(p => isTargetable(p) && !p.guessOnly && countAskable(p) >= QUESTIONS_PER_GAME);
+      if (state.league !== 'all') {
+        const inLeague = base.filter(p => p.league === state.league)
+                             .sort((a, b) => (b.sitelinks || 0) - (a.sitelinks || 0));
+        if (inLeague.length >= 6) {
+          const [from, to] = LEAGUE_TIERS[state.difficulty] || LEAGUE_TIERS.normal;
+          const tier = inLeague.slice(Math.floor(inLeague.length * from), Math.max(Math.ceil(inLeague.length * to), Math.floor(inLeague.length * from) + 1));
+          if (tier.length) return tier;
+          return inLeague;
+        }
+      }
+      let pool = base.filter(p => inDifficulty(p, state.difficulty));
+      if (pool.length < MIN_DIFFICULTY_POOL) pool = base;
+      return pool;
+    }
+
     function startGame() {
       // Hedef futbolcu kuralları (tahmin listesi etkilenmez, herkes tahmin edilebilir):
       //  1) Dünya çapında ünlü (Wikipedia dil sayısı yüksek) oyuncularda kısıtlama yok
       //  2) Ünlü değilse zirve piyasa değeri en az 25M € olmalı
-      //  3) Süper Lig'de oynayan her oyuncu çıkabilir
-      const targetable = state.allPlayers.filter(isTargetable);
-      let pool = targetable.filter(p => countAskable(p) >= QUESTIONS_PER_GAME);
+      //  3) Süper Lig'de oynayan her oyuncu çıkabilir ("sadece tahmin" işaretliler hariç)
+      //  4) Lig seçildiyse hedef o ligdeki kulüplerden biri olur
+      let pool = buildTargetPool();
       if (pool.length === 0) {
-        // Yeterince dolu oyuncu yoksa en çok alanı dolu olanları kullan
+        const targetable = state.allPlayers.filter(isTargetable);
         const max = Math.max(...targetable.map(countAskable));
         pool = targetable.filter(p => countAskable(p) === max);
       }
@@ -1597,6 +1701,8 @@
       state.currentRound = 1;
       state.p1Score = 0;
       state.p2Score = 0;
+      state.p1Joker = 1;
+      state.p2Joker = 1;
       state.rounds = questions.map((q, i) => ({
         roundNum: i + 1,
         targetPlayer: target,
@@ -1606,10 +1712,67 @@
         diffP1: null,
         diffP2: null,
         winner: null,
-        resolved: false
+        resolved: false,
+        hint: null,       // joker ipucu metni
+        hintBy: null      // 'p1' | 'p2'
       }));
       state.roundHistory = state.rounds;
       beginRound();
+    }
+
+    // Süre modu: seçenekler ve zamanlayıcı
+    const TIME_OPTIONS = [
+      { value: 30, label: '30 sn',    desc: 'Hızlı' },
+      { value: 60, label: '1 dk',     desc: 'Rahat' },
+      { value: 0,  label: 'Sınırsız', desc: 'Süre yok' }
+    ];
+    function timeLabel(v) { const o = TIME_OPTIONS.find(x => x.value === v); return o ? o.label : 'Sınırsız'; }
+
+    let turnTimerId = null;
+    function clearTurnTimer() {
+      if (turnTimerId) { clearInterval(turnTimerId); turnTimerId = null; }
+    }
+    // Süre dolunca o oyuncu o turda tahmin yapmamış sayılır (puan alamaz)
+    const TIMEOUT_GUESS = { id: 'timeout', name: 'Süre doldu', timedOut: true };
+
+    /**
+     * Joker ipucu: hedef değeri tam vermez; sayısal sorularda değeri içeren bir aralık,
+     * doğum yeri sorusunda şehir adının baş harfi ve uzunluğu verilir.
+     */
+    function buildHint(target, qKey) {
+      if (qKey === 'birthPlace') {
+        const name = (target.birthPlace && target.birthPlace.name) || '';
+        const letters = name.replace(/[^\p{L}]/gu, '');
+        return `Doğum yeri "${name.charAt(0).toUpperCase()}" harfiyle başlıyor ve adı ${letters.length} harften oluşuyor.`;
+      }
+      const v = target[qKey];
+      const widthFor = {
+        birthYear: 6,
+        heightCm: 8,
+        careerTeams: 3,
+        intlCaps: Math.max(10, Math.round(v * 0.25)),
+        intlGoals: Math.max(4, Math.round(v * 0.3)),
+        peakMarketValueM: Math.max(10, Math.round(v * 0.3)),
+        leagueGoals: Math.max(20, Math.round(v * 0.3)),
+        trophies: Math.max(3, Math.round(v * 0.3))
+      };
+      const width = widthFor[qKey] || Math.max(5, Math.round(v * 0.3));
+      // Hedef aralığın tam ortasında olmasın diye rastgele kaydır
+      let lo = v - Math.floor(Math.random() * (width + 1));
+      if (lo < 0) lo = 0;
+      const hi = lo + width;
+      const fmt = (n) => qKey === 'birthYear' ? `${n}` : n.toLocaleString('tr-TR');
+      return `Gerçek değer ${fmt(lo)} ile ${fmt(hi)} ${unitOf(qKey)} arasında.`;
+    }
+
+    function useJoker(playerKey) {
+      const jokerProp = playerKey === 'p1' ? 'p1Joker' : 'p2Joker';
+      const cur = state.rounds[state.currentRound - 1];
+      if (state[jokerProp] < 1 || cur.resolved || cur.hint) return false;
+      state[jokerProp] -= 1;
+      cur.hint = buildHint(state.targetPlayer, cur.question.key);
+      cur.hintBy = playerKey;
+      return true;
     }
 
     /** beginRound(): Mevcut tur için Oyuncu 1'in tahmin sırasını başlatır. */
@@ -1648,6 +1811,7 @@
     }
 
     function render() {
+      clearTurnTimer();
       updateHud();
       switch (state.view) {
         case 'SETUP':
@@ -1696,7 +1860,36 @@
             <input type="text" id="inputP2" class="setup-input" value="${state.p2Name}" maxlength="20" placeholder="2. Oyuncu Adı" />
           </div>
 
-          
+          <div class="setup-group">
+            <span class="setup-label">Lig</span>
+            <div class="diff-grid league-grid" id="leagueGrid">
+              ${Object.entries(LEAGUES).map(([k, l]) => `
+                <button type="button" class="diff-opt league-opt ${state.league === k ? 'selected' : ''}" data-league="${k}">
+                  <strong>${l.icon} ${l.label}</strong><small>${l.desc}</small>
+                </button>`).join('')}
+            </div>
+          </div>
+
+          <div class="setup-group">
+            <span class="setup-label">Zorluk</span>
+            <div class="diff-grid" id="diffGrid">
+              ${Object.entries(DIFFICULTIES).map(([k, d]) => `
+                <button type="button" class="diff-opt ${state.difficulty === k ? 'selected' : ''}" data-diff="${k}">
+                  <strong>${d.icon} ${d.label}</strong><small>${d.desc}</small>
+                </button>`).join('')}
+            </div>
+          </div>
+
+          <div class="setup-group">
+            <span class="setup-label">Tahmin Süresi</span>
+            <div class="diff-grid" id="timeGrid">
+              ${TIME_OPTIONS.map(o => `
+                <button type="button" class="diff-opt time-opt ${state.timeLimit === o.value ? 'selected' : ''}" data-time="${o.value}">
+                  <strong>⏱ ${o.label}</strong><small>${o.desc}</small>
+                </button>`).join('')}
+            </div>
+          </div>
+
           <button id="startGameBtn" class="btn btn-primary" style="margin-top: 1rem;">
             Düelloyu Başlat ⚽
           </button>
@@ -1706,6 +1899,10 @@
             <ul>
                 <li>Oyunda tek bir <strong>Hedef Futbolcu</strong> vardır. ${QUESTIONS_PER_GAME} tur boyunca bu futbolcunun ${QUESTIONS_PER_GAME} farklı özelliği sorulur (milli gol, boy, doğum yılı, piyasa değeri, doğum yeri gibi).</li>
                 <li>Her turda sırayla önce 1. Oyuncu, sonra 2. Oyuncu, o özellikte hedef futbolcuya <strong>en yakın değere</strong> sahip olduğunu düşündüğü başka bir futbolcuyu yazar.</li>
+                <li><strong>Lig:</strong> Trendyol Süper Lig, La Liga veya Premier Lig seçersen hedef futbolcu o ligde oynayan biri olur. Zorluk da o ligin içinde geçerlidir (Kolay = ligin en tanınan oyuncuları).</li>
+                <li><strong>Zorluk:</strong> Kolay modda en bilinen, Zor modda daha az bilinen futbolcular hedef olur.</li>
+                <li><strong>⏱ Süre:</strong> 30 sn, 1 dk veya sınırsız seç. Her oyuncunun tahmin süresi ayrıdır; süre dolarsa o turda tahmin yapılmamış sayılır.</li>
+                <li><strong>💡 Joker:</strong> Her oyuncunun oyun boyunca 1 ipucu jokeri vardır. Kendi sırasında kullanırsan o turun gerçek değerini içeren bir aralık (veya doğum yeri için baş harf) görürsün; rakip görmez.</li>
                 <li>Hedef futbolcunun kendisi seçilemez. İki oyuncu aynı turda aynı futbolcuyu seçemez.</li>
                 <li>1. Oyuncunun tahmini, 2. Oyuncu da tahmin edene kadar gizli kalır.</li>
                 <li>Hedef değere daha çok yaklaşan tur puanını alır (eşitlikte ikisi de 1 puan alır).</li>
@@ -1713,6 +1910,30 @@
           </div>
         </div>
       `;
+
+      // Lig seçimi
+      document.querySelectorAll('#leagueGrid .diff-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.league = btn.dataset.league;
+          document.querySelectorAll('#leagueGrid .diff-opt').forEach(b => b.classList.toggle('selected', b === btn));
+          sfx.click();
+        });
+      });
+      // Zorluk seçimi
+      document.querySelectorAll('#diffGrid .diff-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.difficulty = btn.dataset.diff;
+          document.querySelectorAll('#diffGrid .diff-opt').forEach(b => b.classList.toggle('selected', b === btn));
+          sfx.click();
+        });
+      });
+      document.querySelectorAll('#timeGrid .diff-opt').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.timeLimit = parseInt(btn.dataset.time, 10);
+          document.querySelectorAll('#timeGrid .diff-opt').forEach(b => b.classList.toggle('selected', b === btn));
+          sfx.click();
+        });
+      });
 
       // Başlat butonu dinleyicisi
       document.getElementById('startGameBtn').addEventListener('click', () => {
@@ -1770,7 +1991,11 @@
           const won = r.winner === key || r.winner === 'tie';
           cls += won ? ' q-won' : ' q-lost';
           tag = r.winner === 'tie' ? 'Berabere +1' : (won ? 'Kazandı +1' : 'Puan yok');
-          if (guess.isCityGuess) {
+          if (guess.timedOut) {
+            body = `
+              <div class="q-guess-name">⏱ Süre doldu</div>
+              <div class="q-diff tabular-nums">Tahmin yapılmadı</div>`;
+          } else if (guess.isCityGuess) {
             // Şehir tahmini: şehir adı + hedefe km uzaklığı
             body = `
               <div class="q-guess-name">📍 ${guess.name}</div>
@@ -1789,6 +2014,11 @@
           cls += ' q-active';
           tag = 'Sıra sende';
           body = `
+            ${state.timeLimit > 0 ? `
+            <div class="turn-timer" id="turnTimer">
+              <div class="turn-timer-text"><span>⏱ Kalan süre</span><span id="turnTimerSec" class="tabular-nums">${state.timeLimit} sn</span></div>
+              <div class="turn-timer-bar"><div class="turn-timer-fill" id="turnTimerFill"></div></div>
+            </div>` : ''}
             <div id="errorAlertBox" style="display: none;" class="alert-box"></div>
             <div class="guess-form">
               <div class="input-group">
@@ -1797,7 +2027,13 @@
                 <ul id="autocompleteDropdown" class="autocomplete-list" style="display: none;"></ul>
               </div>
               <button id="confirmGuessBtn" class="btn ${isP1 ? 'btn-p1' : 'btn-p2'}">Tahmini Kilitle 🔒</button>
-            </div>`;
+            </div>
+            ${(() => {
+              const left = isP1 ? state.p1Joker : state.p2Joker;
+              const mine = r.hint && r.hintBy === key;
+              const btn = mine ? '' : `<button type="button" id="jokerBtn" class="joker-btn" ${left < 1 ? 'disabled' : ''}>${left < 1 ? '💡 Joker kullanıldı' : '💡 Joker kullan (ipucu al) · 1 hak'}</button>`;
+              return `${btn}<div id="jokerHintBox" class="joker-hint" style="${mine ? '' : 'display:none;'}">${mine ? '💡 ' + r.hint : ''}</div>`;
+            })()}`;
         } else if (pendingGuess) {
           // Tahmin yapıldı ama sonuç açıklanmadı: ismi GİZLİ tut
           cls += ' q-locked';
@@ -1832,7 +2068,7 @@
         return `
           <section class="board-col side-panel side-${key} ${isActive ? 'is-active' : ''}">
             <header class="side-head">
-              <span class="side-name">${name}</span>
+              <span class="side-name">${name}<span class="joker-badge ${(isP1 ? state.p1Joker : state.p2Joker) < 1 ? 'used' : ''}" title="Joker hakkı">💡 ${(isP1 ? state.p1Joker : state.p2Joker)}</span></span>
               <span class="side-score tabular-nums">${score}</span>
             </header>
             <div class="q-box-list">${boxes}</div>
@@ -1856,6 +2092,7 @@
         let outcomeText;
         if (cur.winner === 'p1') outcomeText = `🏆 Turu <span style="color: var(--p1-color);">${state.p1Name}</span> kazandı (+1)`;
         else if (cur.winner === 'p2') outcomeText = `🏆 Turu <span style="color: var(--p2-color);">${state.p2Name}</span> kazandı (+1)`;
+        else if (cur.winner === 'none') outcomeText = `⏱ İkisi de süreyi kaçırdı, puan yok`;
         else outcomeText = `🤝 Berabere! İkisi de +1 puan aldı`;
         outcomeHtml = `
           <div class="value-block center-value">
@@ -1872,6 +2109,12 @@
         <section class="board-col board-center">
           <span class="target-kicker">Hedef Futbolcu</span>
           <h1 class="target-name" lang="en">${target.name}</h1>
+          <div class="target-photo-wrap">
+            ${target.image || target.id ? `<img class="target-photo" src="${target.image || ''}" alt="${target.name}" referrerpolicy="no-referrer"
+                 data-orig="${target.image || ''}" data-pid="${target.id || ''}" data-step="${target.image ? 0 : 1}"
+                 onerror="window.photoFallback(this)" />` : ''}
+            <div class="target-photo-fallback" style="${(target.image || target.id) ? '' : 'display:flex;'}">${(target.name || '?').trim().charAt(0).toUpperCase()}</div>
+          </div>
           <div class="round-pill">Tur ${state.currentRound} / ${state.totalRounds}</div>
           <div class="target-question-box">
             <span class="target-question-icon">${cur.question.icon}</span>
@@ -2144,6 +2387,52 @@
       }
 
       submitBtn.addEventListener('click', handleFormSubmit);
+
+      // Süre sayacı
+      if (state.timeLimit > 0) {
+        const total = state.timeLimit * 1000;
+        const deadline = Date.now() + total;
+        const timerEl = document.getElementById('turnTimer');
+        const secEl = document.getElementById('turnTimerSec');
+        const fillEl = document.getElementById('turnTimerFill');
+        turnTimerId = setInterval(() => {
+          const left = Math.max(0, deadline - Date.now());
+          const sec = Math.ceil(left / 1000);
+          secEl.textContent = `${sec} sn`;
+          fillEl.style.width = `${(left / total) * 100}%`;
+          timerEl.classList.toggle('warn', sec <= 15 && sec > 5);
+          timerEl.classList.toggle('danger', sec <= 5);
+          if (left <= 0) {
+            clearTurnTimer();
+            showToast('⏱ Süre doldu! Bu turda tahmin yapılmadı.');
+            if (activePlayerKey === 'p1') {
+              state.p1GuessPlayer = TIMEOUT_GUESS;
+              state.view = 'ROUND_P2';
+              render();
+            } else {
+              state.p2GuessPlayer = TIMEOUT_GUESS;
+              calculateRoundResult();
+            }
+          }
+        }, 250);
+      }
+
+      // Joker: sayfayı yeniden çizmeden ipucunu göster (yazılan metin kaybolmasın)
+      const jokerBtn = document.getElementById('jokerBtn');
+      if (jokerBtn) {
+        jokerBtn.addEventListener('click', () => {
+          if (!useJoker(activePlayerKey)) return;
+          const cur = state.rounds[state.currentRound - 1];
+          const box = document.getElementById('jokerHintBox');
+          box.textContent = '💡 ' + cur.hint;
+          box.style.display = 'block';
+          jokerBtn.remove();
+          const badge = document.querySelector(`.side-${activePlayerKey} .joker-badge`);
+          if (badge) { badge.textContent = '💡 0'; badge.classList.add('used'); }
+          sfx.confirm();
+          searchInput.focus();
+        });
+      }
     }
 
     /**
@@ -2162,7 +2451,9 @@
       const diffP2 = calculateDifference(target, p2, qKey);
 
       let winner;
-      if (diffP1 < diffP2) {
+      if (diffP1 === Infinity && diffP2 === Infinity) {
+        winner = 'none';   // ikisi de süreyi kaçırdı: puan yok
+      } else if (diffP1 < diffP2) {
         winner = 'p1';
         state.p1Score += 1;
       } else if (diffP2 < diffP1) {
@@ -2235,6 +2526,7 @@
         let winnerTag = '';
         if (r.winner === 'p1') winnerTag = `<strong style="color: var(--p1-color);">${state.p1Name} kazandı</strong>`;
         else if (r.winner === 'p2') winnerTag = `<strong style="color: var(--p2-color);">${state.p2Name} kazandı</strong>`;
+        else if (r.winner === 'none') winnerTag = `<strong style="color: var(--text-muted);">Puan yok</strong>`;
         else winnerTag = `<strong style="color: var(--accent-gold);">Berabere</strong>`;
 
         return `
@@ -2244,8 +2536,8 @@
                 Tur ${r.roundNum}: ${r.question.shortName} · Gerçek: ${shortValue(r.targetPlayer, r.question.key)}
               </div>
               <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;">
-                ${state.p1Name}: <em>${r.p1Guess.name}</em> (${formatDifference(r.diffP1, r.question.key)}) · 
-                ${state.p2Name}: <em>${r.p2Guess.name}</em> (${formatDifference(r.diffP2, r.question.key)})
+                ${state.p1Name}: <em>${r.p1Guess.name}</em> (${r.p1Guess.timedOut ? 'tahmin yok' : formatDifference(r.diffP1, r.question.key)}) · 
+                ${state.p2Name}: <em>${r.p2Guess.name}</em> (${r.p2Guess.timedOut ? 'tahmin yok' : formatDifference(r.diffP2, r.question.key)})
               </div>
             </div>
             <div>${winnerTag}</div>
@@ -2258,7 +2550,7 @@
           <div class="gameover-trophy">🏆</div>
           <h2 class="gameover-winner-title">${outcomeTitle}</h2>
           <p style="color: var(--text-muted); font-size: 1.05rem;">${outcomeDesc}</p>
-          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.4rem;">Hedef futbolcu: <strong style="color:#fff;" lang="en">${state.targetPlayer.name}</strong></p>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.4rem;">Hedef futbolcu: <strong style="color:#fff;" lang="en">${state.targetPlayer.name}</strong> · Lig: <strong style="color:#fff;">${LEAGUES[state.league].icon} ${LEAGUES[state.league].label}</strong> · Zorluk: <strong style="color:#fff;">${DIFFICULTIES[state.difficulty].icon} ${DIFFICULTIES[state.difficulty].label}</strong> · Süre: <strong style="color:#fff;">⏱ ${timeLabel(state.timeLimit)}</strong></p>
 
           <!-- Skor Göstergesi -->
           <div class="gameover-score-pill">
@@ -2308,6 +2600,48 @@
     }
 
     initGame();
+  </script>
+
+  <script>
+    // Oyuncu fotoğrafı yedek zinciri:
+    // 0) Transfermarkt (doğrudan)  ->  1) wsrv.nl proxy üzerinden Transfermarkt
+    // 2) Wikidata/Wikimedia Commons fotoğrafı  ->  3) baş harf
+    (function () {
+      const wdCache = {};
+      function showInitial(img) {
+        img.style.display = 'none';
+        const fb = img.nextElementSibling;
+        if (fb) fb.style.display = 'flex';
+      }
+      async function wikidataImage(qid) {
+        if (!/^Q\d+$/.test(qid || '')) return null;
+        if (qid in wdCache) return wdCache[qid];
+        try {
+          const r = await fetch('https://www.wikidata.org/w/api.php?action=wbgetclaims&entity=' + qid +
+            '&property=P18&format=json&origin=*');
+          const j = await r.json();
+          const f = j.claims && j.claims.P18 && j.claims.P18[0].mainsnak.datavalue.value;
+          wdCache[qid] = f ? 'https://commons.wikimedia.org/wiki/Special:FilePath/' +
+            encodeURIComponent(f) + '?width=400' : null;
+        } catch (e) { wdCache[qid] = null; }
+        return wdCache[qid];
+      }
+      window.photoFallback = async function (img) {
+        const step = parseInt(img.dataset.step || '0', 10);
+        img.dataset.step = String(step + 1);
+        const orig = img.dataset.orig;
+        if (step === 0 && orig) {
+          img.src = 'https://wsrv.nl/?url=' + encodeURIComponent(orig) + '&w=400';
+        } else if (step <= 1) {
+          img.dataset.step = '2';
+          const url = await wikidataImage(img.dataset.pid);
+          if (!img.isConnected) return;
+          if (url) img.src = url; else showInitial(img);
+        } else {
+          showInitial(img);
+        }
+      };
+    })();
   </script>
 </body>
 </html>

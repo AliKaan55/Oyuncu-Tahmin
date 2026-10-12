@@ -786,6 +786,7 @@ def merge(tm_df, wd, min_sitelinks, min_fields, current_season=CURRENT_SEASON, o
             "careerTeams": (wd_careers.get((w or {}).get("qid")) or {}).get("teams"),
             "trophies": tm_trophies.get(tm_id),
             "sitelinks": (w or {}).get("sitelinks", 0),       # şöhret ölçüsü (Wikipedia dil sayısı); hedef seçiminde kullanılır
+            "image": (str(row.get("image_url")) if row.get("image_url") and str(row.get("image_url")) != "nan" else None),   # oyuncu fotoğrafı (Transfermarkt)
             "superLig": bool(team) and any(same_club(team, n) for n in TR_CLUB_NAMES.values()),
             "_sl": (w or {}).get("sitelinks", 0),
         }
